@@ -42,6 +42,7 @@ namespace FlightControlWeb
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                
             });
         }
     }
