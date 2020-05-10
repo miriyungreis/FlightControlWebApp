@@ -6,7 +6,7 @@ export class FlightDetails extends Component {
     render() {
         return (
             <div>
-                <h1>Flight Details  Flight Details  Flight Details  Flight Details  Flight Details  Flight Details  Flight Details </h1>
+                <h1>Flight Details  Flight Details  Flight Details  Flight Details  Flight Details  Flight Details  Flight Details miri was here </h1>
             </div>
 
         );
