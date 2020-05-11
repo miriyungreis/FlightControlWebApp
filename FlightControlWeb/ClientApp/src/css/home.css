@@ -1,0 +1,47 @@
+﻿/* #flexbox {
+  display: flex;
+  flex-wrap: wrap;
+  width: 300px;
+  row-gap: 20px;
+}
+
+#flexbox > div {
+  border: 1px solid green;
+  background-color: lime;
+  flex: 1 1 auto;
+  width: 100px;
+  height: 50px;
+} */
+
+.home-box {
+  display: grid;
+  row-gap: 20px;
+}
+
+.row {
+  text-align: center;
+}
+
+.map {
+  border: 5px solid #3b6064;
+  border-radius: 10px;
+  background: #87bba2;
+}
+
+.flight-details {
+  border: 5px solid #3b6064;
+  border-radius: 10px;
+  background: #87bba2;
+}
+
+.external-flights {
+  border: 5px solid #3b6064;
+  border-radius: 5px;
+  background: #87bba2;
+}
+
+.my-flights {
+  border: 5px solid #3b6064;
+  border-radius: 5px;
+  background: #87bba2;
+}
