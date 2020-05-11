@@ -1,6 +1,5 @@
 ﻿a.navbar-brand {
   white-space: normal;
-  font-family: "Yellowtail", cursive;
   font-size: xx-large;
   text-align: center;
   word-break: break-all;
@@ -13,11 +12,9 @@ html {
 @media (min-width: 768px) {
   html {
     font-size: 16px;
-    text-decoration-color: aqua;
   }
 }
 
 .box-shadow {
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
-  background-color: #133c55;
 }

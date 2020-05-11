@@ -1,14 +1,44 @@
 /* Provide sufficient contrast against white background */
+
 a {
   color: #0366d6;
 }
 
 code {
-  color: #E01A76;
+  color: #e01a76;
+}
+
+text {
+  color: #e01a76;
+}
+
+h5 {
+  color: #c9e4ca;
 }
 
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
+}
+
+body {
+  padding: 10, 10, 10, 10;
+  background-color: #c9e4ca;
+  font-family: "Yellowtail", cursive;
+  font-size: 12px;
+}
+
+footer {
+  background-color: #133c55;
+  font-family: "Yellowtail", cursive;
+  font-size: 20px;
+  text-align: center;
+}
+
+html {
+  background-color: #133c55;
+  color: antiquewhite;
+  font-family: "Yellowtail", cursive;
+  font-size: 12px;
 }
