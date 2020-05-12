@@ -3,40 +3,25 @@
 h5 {
   color: #c9e4ca;
   text-align: left;
+  font-weight: bold;
 }
 
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
+  font-weight: bold;
 }
 
-footer {
-  background-color: #0b222c;
-  font-family: "Yellowtail", cursive;
-  font-size: 40px;
+h4 {
+  color: #c17b00;
   text-align: center;
+  margin-top: 5px;
+  font-style: normal;
+  font-weight: bold;
 }
 
-html,
-body {
-  box-sizing: border-box;
-  margin: 0;
-  height: 100%;
-  font-family: "Yellowtail", cursive;
-  font-size: 12px;
-  background-color: #edf0f2;
-}
-
-html {
-  background-color: #0b222c;
-
-  font-size: 14px;
-}
-
-body {
-}
-
+/******************* page parts *******************/
 header {
   box-sizing: border-box;
   background-color: #e01a76;
@@ -45,7 +30,7 @@ header {
 
 nav {
   border-top: #0b222c solid 5px;
-
+  font-family: "courier", monospace;
   box-sizing: border-box;
   background-color: #5f7481;
 }
@@ -56,17 +41,75 @@ head {
   margin: 0px;
   text-align: center;
 }
+footer {
+  background-color: #0b222c;
+  font-family: "courier", monospace;
+  text-align: center;
+  color: #c9e4ca;
+}
 
-.main {
-  width: 100vw;
+html,
+body {
   box-sizing: border-box;
+  margin: 0;
+  height: 100%;
+  font-family: "courier", monospace;
+  font-size: 12px;
+  background-color: #a1a3a5;
+}
+
+html {
+  background-color: #0b222c;
+  font-size: 14px;
 }
 
 .main-app {
   width: 100%;
   height: 100%;
-
   box-sizing: border-box;
-
   padding: 0;
 }
+
+/******************* fix the footer *******************/
+* {
+  box-sizing: border-box;
+}
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+  position: relative;
+}
+.main-container {
+  min-height: 100vh; /* will cover the 100% of viewport */
+  overflow: auto;
+  display: block;
+  position: relative;
+  padding-bottom: 100px; /* height of your footer */
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+/* 
+<!-- pallete -->
+<color name="primaryColor">#344955</color>
+<color name="primaryLightColor">#5f7481</color>
+<color name="primaryDarkColor">#0b222c</color>
+<color name="secondaryColor">#f9aa33</color>
+<color name="secondaryLightColor">#ffdc65</color>
+<color name="secondaryDarkColor">#c17b00</color>
+<color name="primaryTextColor">#ffffff</color>
+<color name="secondaryTextColor">#000000</color>
+<color name="backgroundColor">#EDF0F2</color>
+<color name="red_200">#cf6679</color> <!--Color error (dark)-->
+<color name="red_600">#b00020</color> <!--Color error (light)-->
+<!--Color surface (light), color on error (light), -->
+<!--color on surface (dark), color on surface (dark)-->
+<color name="white_50">#ffffff</color>
+<color name="black_800">#121212</color>  */

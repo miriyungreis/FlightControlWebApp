@@ -1,9 +1,10 @@
 ﻿a.navbar-brand {
   white-space: normal;
-  font-family: "Yellowtail", cursive;
+  font-family: "courier", monospace;
   font-size: xx-large;
   text-align: center;
   word-break: break-all;
+  font-weight: bold;
 }
 
 .navbar-nav {

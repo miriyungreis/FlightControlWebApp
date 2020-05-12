@@ -1,7 +1,5 @@
 ﻿.home-box {
   display: grid;
-  row-gap: 20px;
-  margin-bottom: 5em;
   box-sizing: border-box;
 }
 
@@ -11,32 +9,15 @@
 
 .col-1,
 .col-2 {
-  border: 3px solid #3b6064;
-  border-radius: 5px;
   background: #ffffff;
   overflow: auto;
-  box-shadow: 10px;
-  max-height: 55vh;
+  max-height: 60vh;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border: 5px solid #a1a3a5;
 }
 
 .col-2 {
-  max-height: 25vh;
+  max-height: 30vh;
 }
-
-/* 
-<!-- pallete -->
-<color name="primaryColor">#344955</color>
-<color name="primaryLightColor">#5f7481</color>
-<color name="primaryDarkColor">#0b222c</color>
-<color name="secondaryColor">#f9aa33</color>
-<color name="secondaryLightColor">#ffdc65</color>
-<color name="secondaryDarkColor">#c17b00</color>
-<color name="primaryTextColor">#ffffff</color>
-<color name="secondaryTextColor">#000000</color>
-<color name="backgroundColor">#EDF0F2</color>
-<color name="red_200">#cf6679</color> <!--Color error (dark)-->
-<color name="red_600">#b00020</color> <!--Color error (light)-->
-<!--Color surface (light), color on error (light), -->
-<!--color on surface (dark), color on surface (dark)-->
-<color name="white_50">#ffffff</color>
-<color name="black_800">#121212</color>  */

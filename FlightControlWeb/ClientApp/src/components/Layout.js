@@ -11,12 +11,10 @@ export class Layout extends Component {
         <nav>
           <NavMenu />
         </nav>
-        <div>
-          <Container className="main-app">{this.props.children}</Container>
+        <div id="content-wrap">
+          <Container>{this.props.children}</Container>
         </div>
-        <footer>
-          <h5>This Is The Footer Of The App!</h5>
-        </footer>
+        <footer>This Is The Footer Of The App!</footer>
       </div>
     );
   }
