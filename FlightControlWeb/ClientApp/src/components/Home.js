@@ -13,21 +13,22 @@ export class Home extends Component {
     return (
       <Container className="home-box">
         <Row>
-          <Col className="col" sm={{ size: "8", offset: 0 }}>
+          <Col className="col-1" sm={{ size: "8", offset: 0 }}>
             <h4>Map Of Flights - Live</h4>
             <FlightMap></FlightMap>
           </Col>
-          <Col className="col" sm={{ size: "3", offset: 1 }}>
+
+          <Col className="col-1" sm={{ size: "3", offset: 1 }}>
             <MyFlights></MyFlights>
           </Col>
         </Row>
 
         <Row>
-          <Col className="col" sm={{ size: "8", offset: 0 }}>
+          <Col className="col-2" sm={{ size: "8", offset: 0 }}>
             <FlightDetails></FlightDetails>
           </Col>
 
-          <Col className="col" sm={{ size: "3", offset: 1 }}>
+          <Col className="col-2" sm={{ size: "3", offset: 1 }}>
             <ExternalFlights></ExternalFlights>
           </Col>
         </Row>

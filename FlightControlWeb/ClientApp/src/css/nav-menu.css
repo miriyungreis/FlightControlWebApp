@@ -1,13 +1,25 @@
 ﻿a.navbar-brand {
   white-space: normal;
+  font-family: "Yellowtail", cursive;
   font-size: xx-large;
   text-align: center;
   word-break: break-all;
 }
 
+.navbar-nav {
+  font-size: large;
+}
+
+.navbar-light .navbar-brand {
+  color: #ffffff;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: #ffffff;
+}
+
 html {
   font-size: 14px;
-  /* background-color: #133c55; */
 }
 @media (min-width: 768px) {
   html {

@@ -12,6 +12,10 @@ export class ExternalFlights extends Component {
         <h2>External Flights</h2>
         <h2>External Flights</h2>
         <h2>External Flights</h2>
+        <h2>External Flights</h2>
+        <h2>External Flights</h2>
+        <h2>External Flights</h2>
+        <h2>External Flights</h2>
       </div>
     );
   }
