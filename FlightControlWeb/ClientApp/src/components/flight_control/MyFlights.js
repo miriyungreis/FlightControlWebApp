@@ -1,37 +1,34 @@
-﻿import React, { Component } from "react";
+﻿import React, { useMemo, Component } from "react";
 import { useDropzone } from "react-dropzone";
-import styled from "styled-components";
 import { Table } from "reactstrap";
 
-const getColor = (props) => {
-  if (props.isDragAccept) {
-    return "#00e676";
-  }
-  if (props.isDragReject) {
-    return "#ff1744";
-  }
-  if (props.isDragActive) {
-    return "#2196f3";
-  }
-  return "#eeeeee";
+const baseStyle = {
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  padding: "20px",
+  borderWidth: 2,
+  borderRadius: 2,
+  borderColor: "#eeeeee",
+  borderStyle: "dashed",
+  backgroundColor: "#fafafa",
+  color: "#bdbdbd",
+  outline: "none",
+  transition: "border .24s ease-in-out",
 };
 
-const Container = styled.div`
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-width: 5px;
-  border-radius: 5px;
-  border-color: ${(props) => getColor(props)};
-  border-style: dashed;
-  background-color: #fafafa;
-  color: #bdbdbd;
-  outline: none;
-  transition: border 0.24s ease-in-out;
-`;
+const activeStyle = {
+  borderColor: "#2196f3",
+};
+
+const acceptStyle = {
+  borderColor: "#00e676",
+};
+
+const rejectStyle = {
+  borderColor: "#ff1744",
+};
 
 function StyledDropzone(props) {
   const {
@@ -40,17 +37,38 @@ function StyledDropzone(props) {
     isDragActive,
     isDragAccept,
     isDragReject,
-  } = useDropzone({ accept: "image/*" });
+    acceptedFiles,
+  } = useDropzone({
+    // Note how this callback is never invoked if drop occurs on the inner dropzone
+    onDrop: (acceptedFiles) => console.log(files),
+  });
+  // TODO accept only json files?
+  const style = useMemo(
+    () => ({
+      ...baseStyle,
+      ...(isDragActive ? activeStyle : {}),
+      ...(isDragAccept ? acceptStyle : {}),
+      ...(isDragReject ? rejectStyle : {}),
+    }),
+    [isDragActive, isDragReject, isDragAccept]
+  );
+
+  const files = acceptedFiles.map((file) => (
+    <li key={file.path}>
+      {file.path} - {file.size} bytes
+    </li>
+  ));
 
   return (
     <div className="container">
-      <Container
-        {...getRootProps({ isDragActive, isDragAccept, isDragReject })}
-      >
+      <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
-        <p>Add Flight Plan!</p>
-        <p>Click / Drag</p>
-      </Container>
+        <h6>Add Flight Plan! / Click</h6>
+      </div>
+      <aside>
+        <h4>Files</h4>
+        <ul>{files}</ul>
+      </aside>
     </div>
   );
 }
@@ -58,12 +76,10 @@ function StyledDropzone(props) {
 export class MyFlights extends Component {
   static displayName = MyFlights.name;
 
-  handleOnDrop = () => {};
-
   render() {
     return (
       <div>
-        <StyledDropzone></StyledDropzone>
+        <StyledDropzone />
         <Table>
           <thead>
             <tr>

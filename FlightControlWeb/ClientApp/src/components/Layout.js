@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Container } from "reactstrap";
 import { NavMenu } from "./NavMenu";
 
 export class Layout extends Component {
@@ -7,14 +6,14 @@ export class Layout extends Component {
 
   render() {
     return (
-      <div>
+      <div className="wrapper">
         <nav>
           <NavMenu />
         </nav>
-        <div id="content-wrap">
-          <Container>{this.props.children}</Container>
-        </div>
-        <footer>This Is The Footer Of The App!</footer>
+        <section>
+          <div>{this.props.children}</div>
+        </section>
+        <footer>Arye 182 ©</footer>
       </div>
     );
   }

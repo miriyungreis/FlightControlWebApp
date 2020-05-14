@@ -2,7 +2,6 @@
 import { Map, Marker, Popup, TileLayer } from "react-leaflet";
 import { Icon } from "leaflet";
 //import * as parkData from "./data/skateboard-parks.json";
-import "../../css/flight-map.css";
 
 export default class FlightMap extends Component {
   render() {
