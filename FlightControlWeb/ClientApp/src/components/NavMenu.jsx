@@ -32,7 +32,7 @@ export class NavMenu extends Component {
     return (
       <header title="Welcome!">
         <Navbar
-          className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3"
+          className="navbar-expand-sm navbar-toggleable-sm ng-white box-shadow "
           light
         >
           <Container>

@@ -14,20 +14,7 @@ export class ExternalFlights extends Component {
               <th>Company</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <th scope="row">123456</th>
-              <td>Swiss Air</td>
-            </tr>
-            <tr>
-              <th scope="row">223654</th>
-              <td>Turkish</td>
-            </tr>
-            <tr>
-              <th scope="row">323654</th>
-              <td>Larry</td>
-            </tr>
-          </tbody>
+          <tbody></tbody>
         </Table>
       </div>
     );

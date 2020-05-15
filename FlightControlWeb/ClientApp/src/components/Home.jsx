@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import FlightMap from "./flight_control/FlightMap";
-import { FlightDetails } from "./flight_control/FlightDetails";
-import { MyFlights } from "./flight_control/MyFlights";
-import { ExternalFlights } from "./flight_control/ExternalFlights";
-import FlightList from "./flight_control/FlightList";
-import FlightInput from "./flight_control/FlightInput";
+import FlightMap from "./flight_control/FlightMap.jsx";
+import { FlightDetails } from "./flight_control/FlightDetails.jsx";
+import { MyFlights } from "./flight_control/MyFlights.jsx";
+import { ExternalFlights } from "./flight_control/ExternalFlights.jsx";
 
 export class Home extends Component {
   static displayName = Home.name;
@@ -28,8 +26,6 @@ export class Home extends Component {
           <h4>External Flights</h4>
           <ExternalFlights></ExternalFlights>
         </div>
-        <FlightInput />
-        <FlightList />
       </div>
     );
   }
