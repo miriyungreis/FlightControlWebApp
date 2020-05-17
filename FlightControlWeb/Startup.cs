@@ -5,6 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using FlightControlWeb.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+
 namespace FlightControlWeb
 {
     public class Startup
@@ -27,6 +31,13 @@ namespace FlightControlWeb
             {
                 configuration.RootPath = "ClientApp/build";
             });
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddDbContext<ServersContext>(options =>
+
+                options.UseSqlite("Data Source=Servers.db"));
+            services.AddCors();
+
+            services.AddScoped<ServerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +63,7 @@ namespace FlightControlWeb
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
-
+            InitializeDb.Initialize(app);
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
