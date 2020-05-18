@@ -1,7 +1,8 @@
 ﻿import React, { useMemo, Component } from "react";
-import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { Table, Button } from "reactstrap";
+import PropTypes from "prop-types";
+import FlightItem from "./FlightItem";
 
 /*** Drop Zone style and logic - taken from react dz ***/
 const baseStyle = {
@@ -71,57 +72,36 @@ function StyledDropzone(props) {
   );
 }
 
-/*** API creation using AXIOS (for react) ***/
-const api = axios.create({
-  baseURL: `http://127.0.0.1:5500/ClientApp/src/tests/flights/`,
-});
-
 /*** the component - my flights ***/
 export class MyFlights extends Component {
   static displayName = MyFlights.name;
 
-  state = {
-    my_flights: [],
-  };
-
-  constructor() {
-    super();
-    this.getFlights();
-  }
-
   renderMyFlightsTabelData() {
-    return this.state.my_flights.map((flight) => {
+    return this.props.my_flights.map((flight) => {
       /* flight */
 
-      const { flight_id, company_name } = flight;
       return (
-        <tr key={flight_id}>
-          <th scope="row">{flight_id}</th>
-          <td>{company_name}</td>
-        </tr>
+        <FlightItem
+          key={flight.flight_id}
+          flight={flight}
+          onFlightClick={this.props.onFlightClick}
+        />
       );
     });
   }
 
-  getFlights = async () => {
-    let res = await api.get("/flight_1.json").then((res) => {
-      console.log(res.data);
-      this.setState({ my_flights: res.data });
-    });
-  };
-
-  createFlight = async () => {
-    let res = await api.post("/flight_1.json", {
-      flight_id: "[1112225]",
-      longitude: 33.244,
-      latitude: 31.12,
-      passengers: 300,
-      company_name: "TurkishAirlines",
-      date_time: "2020-12-26T23:56:21Z",
-      is_external: false,
-    });
-    console.log(res);
-  };
+  // createFlight = async () => {
+  //   let res = await api.post("/flight_1.json", {
+  //     flight_id: "[1112225]",
+  //     longitude: 33.244,
+  //     latitude: 31.12,
+  //     passengers: 300,
+  //     company_name: "TurkishAirlines",
+  //     date_time: "2020-12-26T23:56:21Z",
+  //     is_external: false,
+  //   });
+  //   console.log(res);
+  // };
 
   render() {
     return (
@@ -130,11 +110,12 @@ export class MyFlights extends Component {
         <StyledDropzone />
         <button onClick={this.createFlight}> Generate Flight! </button>
         {/* the table of flights - dynamic table */}
-        <Table>
+        <Table hover>
           <thead>
             <tr>
               <th>Flight ID</th>
               <th>Company</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>{this.renderMyFlightsTabelData()}</tbody>
@@ -144,3 +125,7 @@ export class MyFlights extends Component {
     );
   }
 }
+
+MyFlights.propTypes = {
+  my_flights: PropTypes.array.isRequired,
+};
