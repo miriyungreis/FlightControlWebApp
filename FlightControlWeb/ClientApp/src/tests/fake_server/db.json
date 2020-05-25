@@ -1,0 +1,38 @@
+{
+  "Flights": [
+    {
+      "flight_id": "SA12223",
+      "longitude": 33.244,
+      "latitude": 31.12,
+      "passengers": 216,
+      "company_name": "Swiss Air",
+      "date_time": "2020-12-26T23:56:21Z",
+      "is_external": false
+    }
+  ],
+
+  "FlightPlan": [
+    {
+      "flight_id": "SA12223",
+      "passengers": "2",
+      "company_name": "ISRAIR",
+      "initial_location": {
+        "longitude": 34.95761,
+        "latitude": 29.555631,
+        "date_time": "2020-05-24T10:55:00Z"
+      },
+      "segments": [
+        {
+          "longitude": 35.211514,
+          "latitude": 31.769399,
+          "timespan_seconds": 10000
+        },
+        {
+          "longitude": 34.781668,
+          "latitude": 32.113742,
+          "timespan_seconds": 6000
+        }
+      ]
+    }
+  ]
+}
