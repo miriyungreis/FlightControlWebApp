@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using FlightControlWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using FlightControlWeb;
 
 namespace FlightControlWeb
 {
@@ -25,6 +26,7 @@ namespace FlightControlWeb
         {
 
             services.AddControllersWithViews();
+           // services.AddAutoMapper(System.AppDomain.CurrentDomain.GetAssemblies());
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -32,12 +34,12 @@ namespace FlightControlWeb
                 configuration.RootPath = "ClientApp/build";
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            services.AddDbContext<ServersContext>(options =>
+            services.AddDbContext<MyDbContext>(options =>
 
-                options.UseSqlite("Data Source=Servers.db"));
-            services.AddCors();
-
-            services.AddScoped<ServerRepository>();
+               options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IRepository, Repository>();
+          //  services.AddCors();
+            services.AddHttpClient("api", client => client.DefaultRequestHeaders.Add("Accept", "application/json"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,7 +65,6 @@ namespace FlightControlWeb
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
-            InitializeDb.Initialize(app);
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";

@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
+
 namespace FlightControlWeb.Models
 {
-    public class Server
+    public class FlightServerMap
     {
         [Key]
         [Required]
+        public string FlightId { get; set; }
         public string ServerId { get; set; }
-        public string ServerURL { get; set; }
     }
 }
