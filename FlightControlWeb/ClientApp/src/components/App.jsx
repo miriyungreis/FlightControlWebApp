@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Route } from "react-router";
-import { Layout } from "./components/Layout.jsx";
-import { Home } from "./components/Home.jsx";
-import { About } from "./components/About.jsx";
+import { Layout } from "./Layout";
+import { Home } from "../Home";
+import { About } from "./About";
 
 import "./css/custom.css";
 

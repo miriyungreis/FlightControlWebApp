@@ -1,0 +1,29 @@
+[
+  {
+    "flight_id": "[1112223]",
+    "longitude": 33.244,
+    "latitude": 31.12,
+    "passengers": 216,
+    "company_name": "SwissAir",
+    "date_time": "2020-12-26T23:56:21Z",
+    "is_external": false
+  },
+  {
+    "flight_id": "[1112224]",
+    "longitude": 33.244,
+    "latitude": 31.12,
+    "passengers": 400,
+    "company_name": "QatarAirways",
+    "date_time": "2020-12-26T23:56:21Z",
+    "is_external": false
+  },
+  {
+    "flight_id": "[1112225]",
+    "longitude": 33.244,
+    "latitude": 31.12,
+    "passengers": 300,
+    "company_name": "TurkishAirlines",
+    "date_time": "2020-12-26T23:56:21Z",
+    "is_external": false
+  }
+]
