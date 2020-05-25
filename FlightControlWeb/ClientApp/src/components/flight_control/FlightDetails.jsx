@@ -1,34 +1,56 @@
 ﻿import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { Table } from "reactstrap";
 
 export class FlightDetails extends Component {
   static displayName = FlightDetails.name;
 
-  state = {
-    loading: true,
-  };
+  state = {};
 
-  async componentDidMount() {
-    const url = "https://api.randomuser.me/";
-    const response = await fetch(url);
-    const data = await response.json();
-    this.setState({ person: data.results[0], loading: false });
+  presentFlightDetails() {
+    return Array.from(this.props.my_flights).map((flight) => {
+      /* flight */
+      if (flight.flight_id === this.props.clicked_flight_id) {
+        return (
+          <tr key={flight.flight_id}>
+            <th scope="row">{flight.flight_id}</th>
+            <td>{flight.company_name}</td>
+            <td> {flight.passengers}</td>
+            <td> {flight.longitude} </td>
+            <td> {flight.latitude} </td>
+            <td> --- </td>
+            <td> --- </td>
+            <td> {flight.is_external.toString()} </td>
+          </tr>
+        );
+      }
+    });
   }
 
   render() {
     return (
       <div>
-        {this.state.loading || !this.state.person ? (
-          <div>loading...</div>
-        ) : (
-          <div>
-            <div> {this.state.person.name.title}</div>
-            <div> {this.state.person.name.first}</div>
-            <div> {this.state.person.name.last}</div>
-            <div> {this.state.person.phone}</div>
-            <img src={this.state.person.picture.large} />
-          </div>
-        )}
+        <Table>
+          <thead>
+            <tr>
+              <th>Flight ID</th>
+              <th>Company</th>
+              <th>Passengers</th>
+              <th>Latitude</th>
+              <th>Longtitude</th>
+              <th>Departure</th>
+              <th>Arrival</th>
+              <th>External?</th>
+            </tr>
+          </thead>
+          <tbody>{this.presentFlightDetails()}</tbody>
+        </Table>
       </div>
     );
   }
 }
+
+FlightDetails.propTypes = {
+  clicked_flight_id: PropTypes.string.isRequired,
+  my_flights: PropTypes.array.isRequired,
+};

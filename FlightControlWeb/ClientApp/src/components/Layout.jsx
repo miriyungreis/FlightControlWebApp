@@ -13,7 +13,6 @@ export class Layout extends Component {
         <section>
           <div>{this.props.children}</div>
         </section>
-
         <footer>Arye 182 ©</footer>
       </div>
     );

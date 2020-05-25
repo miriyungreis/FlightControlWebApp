@@ -40,7 +40,6 @@ body {
   line-height: 1.4;
   box-sizing: border-box;
   font-family: inherit;
-  font-size: 12px;
   background-color: var(--backgroundColor);
 }
 
@@ -66,7 +65,6 @@ img {
 
 .wrapper {
   display: grid;
-  gap: 20px;
 }
 
 /******************* Navigation *******************/
@@ -112,22 +110,22 @@ html {
 
 .top-container {
   display: grid;
-  gap: 20px;
+  gap: 2vh;
   grid-template-areas:
     "map map map map map  my-flights"
-    "flight-data flight-data flight-data flight-data flight-data  external-flights";
+    "flight-data flight-data flight-data flight-data flight-data  my-flights";
   padding: 1rem;
   background-color: var(--backgroundColor);
 }
 
 .map {
   grid-area: map;
-  min-height: 30vh;
-  max-height: 55vh;
+  min-height: 60vh;
+  max-height: 60vh;
   background-color: var(--white_50);
   background-size: cover;
   background-position: center;
-  padding: 1rem;
+  /* padding: 1rem; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -138,38 +136,58 @@ html {
 
 .my-flights {
   grid-area: my-flights;
-  min-height: 30vh;
-  max-height: 55vh;
-  overflow: auto;
+  min-height: 82vh;
+  max-height: 82vh;
+
   background-color: var(--white_50);
-  padding: 1rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
   text-align: center;
   box-shadow: var(--shadow);
+}
+
+.flights-container {
+  min-height: 82vh;
+  max-height: 82vh;
+  display: grid;
+  gap: 2vh;
+  grid-template-areas:
+    "my-flights-container"
+    "external-flights-container";
+}
+.my-flights-container {
+  grid-area: my-flights-container;
+  align-items: center;
+  padding: 1rem;
+  min-height: 41vh;
+  max-height: 41vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  text-align: center;
+}
+.external-flights-container {
+  grid-area: external-flights-container;
+  align-items: center;
+  min-height: 41vh;
+  max-height: 41vh;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  text-align: center;
 }
 
 .flight-data {
   grid-area: flight-data;
-  min-height: 15vh;
-  max-height: 30vh;
-  overflow: auto;
-  background-color: var(--white_50);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.external-flights {
-  grid-area: external-flights;
-  min-height: 15vh;
-  max-height: 30vh;
+  min-height: 20vh;
+  max-height: 20vh;
   overflow: auto;
   background-color: var(--white_50);
   padding: 1rem;
@@ -198,4 +216,20 @@ h4 {
   margin-top: 5px;
   font-style: normal;
   font-weight: bold;
+}
+
+.my-dropzone {
+  align-items: center;
+  padding: 1rem;
+
+  align-items: center;
+
+  border-width: 2px;
+  border-radius: 2px;
+  /* //border-color: ${(props) => getColor(props)}; */
+  border-style: dashed;
+  background-color: #fafafa;
+  color: #bdbdbd;
+  outline: none;
+  transition: border 0.24s ease-in-out;
 }
