@@ -11,6 +11,7 @@ using System.Threading;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Net;
+using System.Text.Json;
 
 namespace FlightControlWeb
 {
@@ -166,7 +167,13 @@ namespace FlightControlWeb
                     {
                         var content = response.Content;
                         var data = await content.ReadAsStringAsync();
-                        var externalFlights = JsonConvert.DeserializeObject<IEnumerable<Flight>>(data);
+                        var serializeOptions = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            WriteIndented = true
+                        };
+
+                        var externalFlights = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Flight>>(data, serializeOptions);
                         foreach (Flight f in externalFlights)
                         {
                             if (IsValidFlight(f))

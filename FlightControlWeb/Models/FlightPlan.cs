@@ -18,7 +18,7 @@ namespace FlightControlWeb.Models
             [Required]
             public string FlightId { get; set; }
             public int Passengers { get; set; }
-            [JsonProperty(PropertyName = "company_name")]
+            [JsonPropertyName("company_name")]
             public string CompanyName { get; set; }
 
         [JsonPropertyName("initial_location")]
