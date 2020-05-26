@@ -5,14 +5,7 @@ import { MyFlights } from "./flight_control/MyFlights.jsx";
 import axios from "axios";
 import DropZone from "./flight_control/DropZone";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast, Zoom, Bounce } from "react-toastify";
-
-/*** API creation using AXIOS (for react) ***/
-// const api = axios.create({
-//   baseURL: `http://ronyut4.atwebpages.com/ap2`,
-//   //timeout: 2000,
-//   //baseURL: `http://localhost:3000`,
-// });
+import { ToastContainer, toast } from "react-toastify";
 
 const AxiosError = require("axios-error");
 
@@ -44,7 +37,6 @@ export class Home extends Component {
   }
 
   state = {
-    // regular (system date)
     getFlightsInterval: null,
     getLocalTimeInterval: null,
     date: "",
@@ -60,7 +52,6 @@ export class Home extends Component {
   };
 
   /*** Server Requests - REST API ***/
-  // get("/api/Flights?relative_to=" + this.state.date)
   /* GET FLIGHTS relative to time */
   getFlights = async () => {
     try {
@@ -69,29 +60,22 @@ export class Home extends Component {
         .then((res) => {
           console.log("GET FLIGHTS: " + res.status + " " + res.data);
           this.setState({ my_flights: res.data });
-          //toast.info("Getting Flights From Server!");
-          //console.log(res);
         });
     } catch (error) {
       this.errorHandle(error);
     }
   };
 
-  // TODO -
-  // get("api/FlightPlan/" + this.state.clicked_flight_id)
   /* GET FLIGHT PLAN */
   getFlightPlan = async () => {
     try {
-      console.log(this.state.clicked_flight_id);
       let res = await axios
         .get("api/FlightPlan/" + this.state.clicked_flight_id)
         .then((res) => {
-          console.log(res);
-          //console.log(this.state.clicked_flight_plan);
+          console.log("GETTING FLIGHT PLAN: " + res.status + " " + res.data);
           this.setState({
             clicked_flight_plan: JSON.parse(JSON.stringify(res.data)),
           });
-          //console.log(this.state.clicked_flight_plan);
         });
     } catch (error) {
       this.errorHandle(error);
@@ -104,7 +88,7 @@ export class Home extends Component {
     try {
       let res = await axios.delete("/api/Flights/" + flight_id).then((res) => {
         this.setState({ clicked_flight: null });
-        console.log(res);
+        console.log("DELETING FLIGHT PLAN: " + res.status + res.data);
         toast.info("Flight " + flight_id + " Was Deleted!");
       });
     } catch (error) {
@@ -114,9 +98,7 @@ export class Home extends Component {
 
   /*** When clicking on flight either in map or in table ***/
   onFlightClick = (flight_id) => {
-    console.log(flight_id);
     this.setState({ clicked_flight_id: flight_id }, function () {
-      console.log("the clicked flight is: " + this.state.clicked_flight_id);
       if (this.state.clicked_flight_id != null) {
         this.getFlightPlan();
       } else {
@@ -185,6 +167,7 @@ export class Home extends Component {
           <FlightDetails
             clicked_flight_id={this.state.clicked_flight_id}
             my_flights={this.state.my_flights}
+            clicked_flight_plan={this.state.clicked_flight_plan}
           ></FlightDetails>
         </div>
         <h4>The Time is in UTC: {this.state.date}</h4>
