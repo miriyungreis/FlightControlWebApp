@@ -10,6 +10,7 @@ using FlightControlWeb.Models;
 using System.Threading;
 using System.Net.Http;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace FlightControlWeb
 {
@@ -153,21 +154,35 @@ namespace FlightControlWeb
             if (!(syncAll))
                 return flights;
 
+
             //todo
-
-            /*HttpResponseMessage response =  await _client.GetAsync("http://ronyut3.atwebpages.com/ap2/api/Flights?relative_to=" + strDateTime);
-            response.EnsureSuccessStatusCode();
-            if (response.Content != null)
+            foreach (Server s in _context.Servers)
             {
-                var responseBody = await response.Content.ReadAsStringAsync();
-
-                var externalFlights = JsonConvert.DeserializeObject<Flight>(responseBody);
-                foreach (Flight f in externalFlights)
+                try
                 {
-                    flights.Add(f);
-                    //_context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId= })
+                    var url = s.ServerURL + "/api/Flights?relative_to=" + strDateTime;
+                    HttpResponseMessage response = await _client.GetAsync(url);
+                    if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
+                    {
+                        var content = response.Content;
+                        var data = await content.ReadAsStringAsync();
+                        var externalFlights = JsonConvert.DeserializeObject<IEnumerable<Flight>>(data);
+                        foreach (Flight f in externalFlights)
+                        {
+                            if (IsValidFlight(f))
+                            {
+                                f.IsExternal = true;
+                                flights.Add(f);
+                                await _context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId = s.ServerId });
+                                await _context.SaveChangesAsync();
+                            }
+
+                        }
+                    }
                 }
-            }*/
+                catch { }
+            }
+               
             return flights;
         }
 
@@ -269,6 +284,15 @@ namespace FlightControlWeb
                 prevTime = time;
             }
             return null;
+        }
+
+        bool IsValidFlight(Flight flight)
+        {
+            if (flight.FlightId != null && flight.CompanyName != null && flight.DateTime != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
