@@ -7,6 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using FlightControlWeb.Models;
+using System.Threading;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace FlightControlWeb
 {
@@ -14,9 +17,11 @@ namespace FlightControlWeb
     public class Repository : IRepository
     {
         private readonly MyDbContext _context;
-        public Repository(MyDbContext context)
+        private readonly HttpClient _client;
+        public Repository(MyDbContext context, IHttpClientFactory factory)
         {
             _context = context;
+            _client = factory.CreateClient("api");
         }
         public async Task<ActionResult<FlightPlan>> AddFlightPlan(FlightPlanDto flightPlanDto)
         {
@@ -119,7 +124,7 @@ namespace FlightControlWeb
         public async Task<ActionResult<IEnumerable<Flight>>> GetFlights(string strDateTime, bool syncAll)
         {
             List<Flight> flights = new List<Flight>();
-            DateTime dateTime = DateTime.Parse(strDateTime);
+            DateTime dateTime = DateTimeOffset.Parse(strDateTime).DateTime;
 
 
             foreach (FlightPlan fp in _context.FlightsPlans)
@@ -150,8 +155,20 @@ namespace FlightControlWeb
 
             //todo
 
+            /*HttpResponseMessage response =  await _client.GetAsync("http://ronyut3.atwebpages.com/ap2/api/Flights?relative_to=" + strDateTime);
+            response.EnsureSuccessStatusCode();
+            if (response.Content != null)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
 
-            return null;
+                var externalFlights = JsonConvert.DeserializeObject<Flight>(responseBody);
+                foreach (Flight f in externalFlights)
+                {
+                    flights.Add(f);
+                    //_context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId= })
+                }
+            }*/
+            return flights;
         }
 
         public IEnumerable<Flight> GetFlightsAsync(string date)
@@ -197,20 +214,22 @@ namespace FlightControlWeb
         }
         private void FromSegmentsDtoToSegments(List<SegmentDto> segmentsDto, List<Segment> segments, string flightId)
         {
+            int count = 0;
             Random rnd = new Random();
-
+            int id = rnd.Next(10000, 100000);
             foreach (SegmentDto s in segmentsDto)
             {
                 Segment segment = new Segment
                 {
                     //random id with 5 digits
-                    Id = rnd.Next(10000, 100000),
+                    Id = id + count,
                     Longitude = s.Longitude,
                     Latitude = s.Latitude,
                     TimeSpanSeconds = s.TimeSpanSeconds,
                     FlightId = flightId
                 };
                 segments.Add(segment);
+                count++;
 
             }
         }
@@ -222,7 +241,7 @@ namespace FlightControlWeb
             var segments = _context.Segments.Where(s => s.FlightId == flightPlan.FlightId);
             foreach (Segment s in segments)
             {
-                landingDateTime.AddSeconds(s.TimeSpanSeconds);
+                landingDateTime = landingDateTime.AddSeconds(s.TimeSpanSeconds);
             }
             return landingDateTime;
         }
@@ -233,15 +252,16 @@ namespace FlightControlWeb
             DateTime prevTime = time;
             Location prevLocation = new Location { Longitude = flightPlan.InitialLocation.Longitude, Latitude = flightPlan.InitialLocation.Latitude };
             Location location = new Location();
-            foreach (Segment segment in flightPlan.Segments)
+            var segments = flightPlan.Segments.OrderBy(s => s.Id);
+            foreach (Segment segment in segments)
             {
                 if (time.AddSeconds(segment.TimeSpanSeconds).CompareTo(dateTime) > 0)
                 {
                     TimeSpan DeltaTime = dateTime - prevTime;
                     var velocityX = (segment.Latitude - prevLocation.Latitude) / (segment.TimeSpanSeconds);
-                    location.Latitude = velocityX * (int)DeltaTime.TotalSeconds;
+                    location.Latitude = prevLocation.Latitude + velocityX * (int)DeltaTime.TotalSeconds;
                     var velocityY = (segment.Longitude - prevLocation.Longitude) / (segment.TimeSpanSeconds);
-                    location.Longitude = velocityY * (int)DeltaTime.TotalSeconds;
+                    location.Longitude = prevLocation.Longitude +  velocityY * (int)DeltaTime.TotalSeconds;
                     return location;
                 }
                 prevLocation.Latitude = segment.Latitude;
