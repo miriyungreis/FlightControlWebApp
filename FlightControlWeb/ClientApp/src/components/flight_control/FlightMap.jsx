@@ -1,13 +1,9 @@
 ﻿import React, { Component } from "react";
-import { Map, TileLayer, Polyline, L } from "react-leaflet";
+import { Map, TileLayer, Polyline } from "react-leaflet";
 import FlightMarker from "./FlightMarker";
 import PropTypes from "prop-types";
 
 export default class FlightMap extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   loadFlightsOnMap() {
     return Array.from(this.props.my_flights).map((flight) => {
       /* flight */

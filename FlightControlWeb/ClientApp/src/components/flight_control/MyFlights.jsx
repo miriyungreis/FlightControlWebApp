@@ -1,14 +1,12 @@
 ﻿import React, { Component } from "react";
-import { Table, Button } from "reactstrap";
+import { Table } from "reactstrap";
 import PropTypes from "prop-types";
 import FlightItem from "./FlightItem";
-import DropZone from "./DropZone";
+
 /*** the component - my flights ***/
 export class MyFlights extends Component {
   static displayName = MyFlights.name;
-  constructor(props) {
-    super(props);
-  }
+
   renderMyFlightsTabelData() {
     return Array.from(this.props.my_flights).map((flight) => {
       /* flight */
