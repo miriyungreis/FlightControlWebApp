@@ -11,6 +11,7 @@ using System.Threading;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Net;
+using System.Text.Json;
 
 namespace FlightControlWeb
 {
@@ -78,8 +79,21 @@ namespace FlightControlWeb
 
         public bool DeleteFlight(string id)
         {
-            throw new NotImplementedException();
-
+            var flightPlan = _context.FlightsPlans.Single(f=> f.FlightId == id);
+            if (flightPlan != null)
+            {
+                var initialLocation = _context.InitialLocation.Single(i => i.Id == id);
+                _context.InitialLocation.Remove(initialLocation);
+                var segments = _context.Segments.Where(s => s.FlightId == id);
+                foreach(Segment s in segments)
+                {
+                    _context.Segments.Remove(s);
+                }
+                _context.FlightsPlans.Remove(flightPlan);
+                _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
         public bool DeleteServer(string id)
@@ -116,7 +130,27 @@ namespace FlightControlWeb
                 
                 return flightPlanDto;
             }
-
+            foreach (Server s in _context.Servers)
+            {
+                try
+                {
+                    var url = s.ServerURL + "/api/FlightPlan/" + id;
+                    HttpResponseMessage response = await _client.GetAsync(url);
+                    if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
+                    {
+                        var content = response.Content;
+                        var data = await content.ReadAsStringAsync();
+                        var serializeOptions = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            WriteIndented = true
+                        };
+                        var externalFlightPlan = System.Text.Json.JsonSerializer.Deserialize<FlightPlanDto>(data, serializeOptions);
+                        return externalFlightPlan;
+                    }
+                }
+                catch { }
+            }
             //Todo
             return null;
         }
@@ -166,7 +200,13 @@ namespace FlightControlWeb
                     {
                         var content = response.Content;
                         var data = await content.ReadAsStringAsync();
-                        var externalFlights = JsonConvert.DeserializeObject<IEnumerable<Flight>>(data);
+                        var serializeOptions = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            WriteIndented = true
+                        };
+
+                        var externalFlights = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Flight>>(data, serializeOptions);
                         foreach (Flight f in externalFlights)
                         {
                             if (IsValidFlight(f))
@@ -184,11 +224,6 @@ namespace FlightControlWeb
             }
                
             return flights;
-        }
-
-        public IEnumerable<Flight> GetFlightsAsync(string date)
-        {
-            throw new NotImplementedException();
         }
 
         public IEnumerable<Server> GetServers()

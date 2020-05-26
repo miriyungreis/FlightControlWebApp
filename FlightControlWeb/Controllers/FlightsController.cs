@@ -46,15 +46,15 @@ namespace FlightControlWeb.Controllers
 
         // DELETE: api/Flights/5
         [HttpDelete("{id}")]
-        public Task<ActionResult<Flight>> DeleteFlight(string id)
+        public ActionResult<Flight> DeleteFlight(string id)
         {
             var result = _context.DeleteFlight(id);
             if (result == false)
             {
-                return null;
+                return NotFound();
             }
 
-            return null;
+            return NoContent();
         }
 
 
