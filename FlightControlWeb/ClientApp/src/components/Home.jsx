@@ -65,7 +65,7 @@ export class Home extends Component {
   getFlights = async () => {
     try {
       let res = await axios
-        .get("/api/Flights?relative_to=" + this.state.date)
+        .get("/api/Flights?relative_to=" + this.state.date + "&sync_all")
         .then((res) => {
           console.log("GET FLIGHTS: " + res.status + " " + res.data);
           this.setState({ my_flights: res.data });

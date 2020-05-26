@@ -14,29 +14,28 @@ const divStyle = {
 };
 
 export default class DropZone extends Component {
-  constructor() {
-    super();
-    this.onDrop = (files) => {
-      this.setState({ files: files, dragEntered: false });
+  state = {
+    style: "",
+    dragEntered: false,
+  };
 
-      this.postFlight();
+  onDrop = async ([file]) => {
+    var reader = new FileReader();
+    reader.onload = (e) => {
+      var contents = e.target.result;
+      this.postFlight(JSON.parse(contents));
     };
-    this.state = {
-      files: [],
-      style: "",
-      dragEntered: false,
-    };
-  }
+    reader.readAsText(file);
+    this.setState({ dragEntered: false });
+  };
 
-  postFlight = async () => {
+  postFlight = async (contents) => {
     try {
-      let res = await axios
-        .post("/api/FlightPlan/", this.state.files[0])
-        .then((res) => {
-          console.log("POSTING FLIGHT PLAN: " + res.status + res.data);
-          console.log(res);
-          toast.success("New Flight Created");
-        });
+      let res = await axios.post("/api/FlightPlan/", contents).then((res) => {
+        console.log("POSTING FLIGHT PLAN: " + res.status + res.data);
+        console.log(res);
+        toast.success("New Flight Created");
+      });
     } catch (error) {
       // Error 😨
       if (error.response) {
