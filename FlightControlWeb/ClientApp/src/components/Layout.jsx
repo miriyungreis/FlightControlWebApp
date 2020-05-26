@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { NavMenu } from "./NavMenu";
 
 export class Layout extends Component {
@@ -10,9 +10,7 @@ export class Layout extends Component {
         <nav>
           <NavMenu />
         </nav>
-        <section>
-          <div>{this.props.children}</div>
-        </section>
+        <div>{this.props.children}</div>
         <footer>Arye 182 ©</footer>
       </div>
     );

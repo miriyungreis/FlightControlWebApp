@@ -3,14 +3,18 @@ import FlightMap from "./flight_control/FlightMap.jsx";
 import { FlightDetails } from "./flight_control/FlightDetails.jsx";
 import { MyFlights } from "./flight_control/MyFlights.jsx";
 import axios from "axios";
-import Dropzone from "react-dropzone";
 import DropZone from "./flight_control/DropZone";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast, Zoom, Bounce } from "react-toastify";
 
 /*** API creation using AXIOS (for react) ***/
-const api = axios.create({
-  baseURL: `http://ronyut4.atwebpages.com/ap2`,
-  //baseURL: `http://localhost:3000`,
-});
+// const api = axios.create({
+//   baseURL: `http://ronyut4.atwebpages.com/ap2`,
+//   //timeout: 2000,
+//   //baseURL: `http://localhost:3000`,
+// });
+
+const AxiosError = require("axios-error");
 
 /*** The Home Page of App - The Dash - Board! ***/
 export class Home extends Component {
@@ -60,15 +64,16 @@ export class Home extends Component {
   /* GET FLIGHTS relative to time */
   getFlights = async () => {
     try {
-      let res = await api
+      let res = await axios
         .get("/api/Flights?relative_to=" + this.state.date)
         .then((res) => {
           console.log("GET FLIGHTS: " + res.status + " " + res.data);
           this.setState({ my_flights: res.data });
-          console.log(res);
+          //toast.info("Getting Flights From Server!");
+          //console.log(res);
         });
     } catch (error) {
-      console.log(error);
+      this.errorHandle(error);
     }
   };
 
@@ -76,9 +81,9 @@ export class Home extends Component {
   // get("api/FlightPlan/" + this.state.clicked_flight_id)
   /* GET FLIGHT PLAN */
   getFlightPlan = async () => {
-    console.log(this.state.clicked_flight_id);
     try {
-      let res = await api
+      console.log(this.state.clicked_flight_id);
+      let res = await axios
         .get("api/FlightPlan/" + this.state.clicked_flight_id)
         .then((res) => {
           console.log(res);
@@ -89,7 +94,7 @@ export class Home extends Component {
           //console.log(this.state.clicked_flight_plan);
         });
     } catch (error) {
-      console.log(error);
+      this.errorHandle(error);
     }
   };
 
@@ -97,12 +102,13 @@ export class Home extends Component {
   onDeleteFlightClick = async (flight_id) => {
     console.log("Deleting flight: " + flight_id);
     try {
-      let res = await api.delete("/api/Flights/" + flight_id).then((res) => {
+      let res = await axios.delete("/api/Flights/" + flight_id).then((res) => {
         this.setState({ clicked_flight: null });
         console.log(res);
+        toast.info("Flight " + flight_id + " Was Deleted!");
       });
     } catch (error) {
-      console.log(error);
+      this.errorHandle(error);
     }
   };
 
@@ -119,10 +125,41 @@ export class Home extends Component {
     });
   };
 
+  errorHandle = (error) => {
+    // Error 😨
+    if (error.response) {
+      /*
+       * The request was made and the server responded with a
+       * status code that falls out of the range of 2xx
+       */
+      toast.error("Error: " + error.response.data);
+      toast.error("Error: " + error.response.status);
+      toast.error("Error: " + error.response.headers);
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    } else if (error.request) {
+      /*
+       * The request was made but no response was received, `error.request`
+       * is an instance of XMLHttpRequest in the browser and an instance
+       * of http.ClientRequest in Node.js
+       */
+      toast.error("Error: The request was made but no response was received");
+      console.log(error.request);
+    } else {
+      // Something happened in setting up the request and triggered an Error
+      toast.error("Error: " + error.message);
+      console.log(error.message);
+    }
+    console.log(new AxiosError(error));
+    toast.error(error);
+  };
+
   // the dashboard of the application - the main container
   render() {
     return (
       <div className="top-container">
+        <ToastContainer position="top-center"></ToastContainer>
         <div className="map">
           <FlightMap
             my_flights={this.state.my_flights}
