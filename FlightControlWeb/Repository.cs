@@ -301,24 +301,35 @@ namespace FlightControlWeb
             DateTime time = flightInitialLocation.DateTime;
             DateTime prevTime = time;
             Location prevLocation = new Location { Longitude = flightInitialLocation.Longitude, Latitude = flightInitialLocation.Latitude };
-            Location location = new Location();
+            //Location location = new Location();
             var segments = _context.Segments.Where(s => s.FlightId == flightPlan.FlightId);
             foreach (Segment segment in segments)
             {
-                if (time.AddSeconds(segment.TimeSpanSeconds).CompareTo(dateTime) > 0)
+                if (time.AddSeconds(segment.TimeSpanSeconds).CompareTo(dateTime) > 0 || time.AddSeconds(segment.TimeSpanSeconds).CompareTo(dateTime)==0)
                 {
-                    TimeSpan DeltaTime = dateTime - prevTime;
-                    var velocityX = (segment.Latitude - prevLocation.Latitude) / (segment.TimeSpanSeconds);
-                    location.Latitude = prevLocation.Latitude + velocityX * (int)DeltaTime.TotalSeconds;
-                    var velocityY = (segment.Longitude - prevLocation.Longitude) / (segment.TimeSpanSeconds);
-                    location.Longitude = prevLocation.Longitude + velocityY * (int)DeltaTime.TotalSeconds;
-                    return location;
+                    TimeSpan deltaTime = dateTime - prevTime;
+                    return NewMethod(deltaTime, prevLocation, segment);
                 }
                 prevLocation.Latitude = segment.Latitude;
                 prevLocation.Longitude = segment.Longitude;
-                prevTime = time;
+                prevTime = time.AddSeconds(segment.TimeSpanSeconds);
             }
             return null;
+        }
+
+        private static Location NewMethod(TimeSpan deltaTime, Location prevLocation, Segment segment)
+        {
+            Location location = new Location();
+            //int direction = 1;
+            //if (prevLocation.Latitude > segment.Latitude)
+                //direction = -1;
+            var velocityX = (segment.Latitude - prevLocation.Latitude) / (segment.TimeSpanSeconds);
+            
+            
+            location.Latitude = prevLocation.Latitude + velocityX * (int)deltaTime.TotalSeconds;
+            var velocityY = (segment.Longitude - prevLocation.Longitude) / (segment.TimeSpanSeconds);
+            location.Longitude = prevLocation.Longitude + velocityY * (int)deltaTime.TotalSeconds;
+            return location;
         }
 
         bool IsValidFlight(Flight flight)
