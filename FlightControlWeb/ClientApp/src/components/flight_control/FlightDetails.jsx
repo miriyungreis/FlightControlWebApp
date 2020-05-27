@@ -3,10 +3,15 @@ import PropTypes from "prop-types";
 import { Table } from "reactstrap";
 import departures from "../../images/departures.svg";
 import arrivals from "../../images/arrivals.svg";
+
 export class FlightDetails extends Component {
   static displayName = FlightDetails.name;
 
   state = {};
+
+  truncate(str, no_words) {
+    return str.split(" ").splice(0, no_words).join(" ");
+  }
 
   presentFlightDetails(request) {
     return Array.from(this.props.my_flights).map((flight) => {
@@ -56,7 +61,7 @@ export class FlightDetails extends Component {
       //console.log(departureDate.toDateString());
       //console.log(departureTime.getTime());
       if (request === 1) {
-        return departureDate.toString();
+        return this.truncate(departureDate.toString(), 5);
       } else if (request === 2) {
         segments.map((segment) => {
           //departureDate.addSecs(segment.Span_Second);
@@ -64,7 +69,7 @@ export class FlightDetails extends Component {
             departureDate.getSeconds() + segment.timespan_seconds
           );
         });
-        return departureDate.toString();
+        return this.truncate(departureDate.toString(), 5);
       }
     } catch (error) {
       console.log(error);
@@ -92,7 +97,7 @@ export class FlightDetails extends Component {
           <thead>
             <tr>
               <th>
-                Departure Time{" "}
+                Departure Time (UTC){" "}
                 <img
                   src={departures}
                   alt=""
@@ -102,7 +107,7 @@ export class FlightDetails extends Component {
                 />{" "}
               </th>
               <th>
-                Arrival Time{" "}
+                Arrival Time (UTC){" "}
                 <img src={arrivals} alt="" border="3" height="24" width="24" />
               </th>
             </tr>

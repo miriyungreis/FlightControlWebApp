@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Dropzone from "react-dropzone";
-import { ToastContainer, toast, Zoom, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 
 // const api = axios.create({
 //   baseURL: `http://ronyut4.atwebpages.com/ap2`,

@@ -14,7 +14,7 @@ export class Home extends Component {
   static displayName = Home.name;
 
   componentDidMount() {
-    const getFlightsInterval = setInterval(this.getFlights, 2000);
+    const getFlightsInterval = setInterval(this.getFlights, 1000);
     const getLocalTimeInterval = setInterval(this.getClock, 1000);
     this.setState(
       {
@@ -87,9 +87,9 @@ export class Home extends Component {
     console.log("Deleting flight: " + flight_id);
     try {
       let res = await axios.delete("/api/Flights/" + flight_id).then((res) => {
-        this.setState({ clicked_flight: null });
+        this.setState({ clicked_flight: null, clicked_flight_plan: null });
         console.log("DELETING FLIGHT PLAN: " + res.status + res.data);
-        toast.info("Flight " + flight_id + " Was Deleted!");
+        toast.info("Deleting Flight " + flight_id);
       });
     } catch (error) {
       this.errorHandle(error);
@@ -105,6 +105,16 @@ export class Home extends Component {
         this.setState({ clicked_flight_plan: null });
       }
     });
+  };
+
+  // onFlightClick = (flight_id) => {
+  //   this.setState({ clicked_flight_id: flight_id });
+
+  //   this.getFlightPlan();
+  // };
+
+  onMapClick = () => {
+    this.setState({ clicked_flight_id: null, clicked_flight_plan: null });
   };
 
   errorHandle = (error) => {
@@ -137,6 +147,15 @@ export class Home extends Component {
     toast.error(error);
   };
 
+  truncate(str, no_words) {
+    return str.split(" ").splice(0, no_words).join(" ");
+  }
+
+  getUTCdate(string) {
+    let utc = new Date(this.state.date);
+    return utc.toString();
+  }
+
   // the dashboard of the application - the main container
   render() {
     return (
@@ -146,6 +165,7 @@ export class Home extends Component {
           <FlightMap
             my_flights={this.state.my_flights}
             onFlightClick={this.onFlightClick}
+            onMapClick={this.onMapClick}
             clicked_flight_id={this.state.clicked_flight_id}
             clicked_flight_plan={this.state.clicked_flight_plan}
           ></FlightMap>
@@ -170,7 +190,8 @@ export class Home extends Component {
             clicked_flight_plan={this.state.clicked_flight_plan}
           ></FlightDetails>
         </div>
-        <h4>The Time is in UTC: {this.state.date}</h4>
+        {/* <h4>Time Now in UTC: {this.state.date}</h4>
+        <h4>Time Now in UTC: {this.truncate(this.getUTCdate(), 5)}</h4> */}
       </div>
     );
   }

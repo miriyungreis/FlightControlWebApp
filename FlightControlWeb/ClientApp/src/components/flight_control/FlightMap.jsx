@@ -36,11 +36,7 @@ export default class FlightMap extends Component {
 
   render() {
     return (
-      <Map
-        center={[0, 0]}
-        zoom={2}
-        onclick={this.props.onFlightClick.bind(this, null)}
-      >
+      <Map center={[0, 0]} zoom={2} onclick={this.props.onMapClick.bind(this)}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
