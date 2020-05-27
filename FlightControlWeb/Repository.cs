@@ -12,6 +12,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text.Json;
+using System.Linq.Expressions;
 
 namespace FlightControlWeb
 {
@@ -79,13 +80,13 @@ namespace FlightControlWeb
 
         public bool DeleteFlight(string id)
         {
-            var flightPlan = _context.FlightsPlans.Single(f=> f.FlightId == id);
+            var flightPlan = _context.FlightsPlans.Single(f => f.FlightId == id);
             if (flightPlan != null)
             {
                 var initialLocation = _context.InitialLocation.Single(i => i.Id == id);
                 _context.InitialLocation.Remove(initialLocation);
                 var segments = _context.Segments.Where(s => s.FlightId == id);
-                foreach(Segment s in segments)
+                foreach (Segment s in segments)
                 {
                     _context.Segments.Remove(s);
                 }
@@ -127,7 +128,7 @@ namespace FlightControlWeb
                     }
                 };
                 FromSegmentsToSegmentsDto(segments, flightPlanDto.Segments);
-                
+
                 return flightPlanDto;
             }
             var servers = await _context.Servers.ToListAsync();
@@ -152,7 +153,7 @@ namespace FlightControlWeb
                 }
                 catch { }
             }
-           
+
             return null;
         }
 
@@ -161,81 +162,72 @@ namespace FlightControlWeb
         {
             List<Flight> flights = new List<Flight>();
             DateTime dateTime = DateTimeOffset.Parse(strDateTime).DateTime;
-            var flightsPlans = await _context.FlightsPlans.ToListAsync();
-
-            foreach (FlightPlan fp in flightsPlans)
+            try
             {
-                InitialLocation initialLocation = await _context.InitialLocation.FindAsync(fp.FlightId);
-                var landingTime = await LandingTime(fp);
-                if (initialLocation!=null && ((initialLocation.DateTime.CompareTo(dateTime) < 0 && landingTime.CompareTo(dateTime) > 0)||initialLocation.DateTime.CompareTo(dateTime)==0))
+                var internalFlights = await GetInternalFlights(dateTime);
+                foreach (Flight f in internalFlights)
                 {
-                    Location location = await GetFlightLocation(fp, dateTime);
-                    if (location != null)
-                    {
-                        flights.Add(new Flight
-                        {
-                            FlightId = fp.FlightId,
-                            Longitude = location.Longitude,
-                            Latitude = location.Latitude,
-                            Passengers = fp.Passengers,
-                            CompanyName = fp.CompanyName,
-                            DateTime = dateTime,
-                            IsExternal = false
-                        });
-
-                    }
+                    flights.Add(f);
                 }
-
             }
-            if (!(syncAll))
+            catch { }
+            if (!syncAll) {
                 return flights;
-
-
-            //todo
+            }
             var servers = await _context.Servers.ToListAsync();
             foreach (Server s in servers)
             {
                 try
                 {
-                    var url = s.ServerURL + "/api/Flights?relative_to=" + strDateTime;
-                    HttpResponseMessage response = await _client.GetAsync(url);
-                    if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
-                    {
-                        var content = response.Content;
-                        var data = await content.ReadAsStringAsync();
-                        var serializeOptions = new JsonSerializerOptions
-                        {
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                            WriteIndented = true
-                        };
-
-                        var externalFlights = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Flight>>(data, serializeOptions);
-                        foreach (Flight f in externalFlights)
-                        {
-                            if (IsValidFlight(f))
-                            {
-                                f.IsExternal = true;
-                                flights.Add(f);
-                                try { 
-                                await _context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId = s.ServerId });
-
-                                await _context.SaveChangesAsync();
-                                }
-                                catch { }
-                            }
-
-                        }
-                    }
+                    await GetExternalFlights(strDateTime, s, flights);
                 }
                 catch { }
             }
-               
             return flights;
         }
 
-        public IEnumerable<Server> GetServers()
+        private async Task GetExternalFlights(string strDateTime, Server s, List<Flight> flights)
         {
-            return _context.Servers.ToList();
+            var url = s.ServerURL + "/api/Flights?relative_to=" + strDateTime;
+            HttpResponseMessage response = await _client.GetAsync(url);
+            if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
+            {
+                var content = response.Content;
+                var data = await content.ReadAsStringAsync();
+                var serializeOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    WriteIndented = true
+                };
+
+                var externalFlights = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Flight>>(data, serializeOptions);
+                foreach (Flight f in externalFlights)
+                {
+                    await AddExternalFlight(s, flights, f);
+
+                }
+            }
+        }
+
+        private async Task AddExternalFlight(Server s, List<Flight> flights, Flight f)
+        {
+            if (IsValidFlight(f))
+            {
+                f.IsExternal = true;
+                try
+                {
+                    await _context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId = s.ServerId });
+
+                    await _context.SaveChangesAsync();
+                    flights.Add(f);
+                }
+                catch { }
+            }
+        }
+
+        public async Task<IEnumerable<Server>> GetServers()
+        {
+            return await _context.Servers.ToListAsync();
         }
         private bool ServerExists(string id)
         {
@@ -310,7 +302,7 @@ namespace FlightControlWeb
             DateTime prevTime = time;
             Location prevLocation = new Location { Longitude = flightInitialLocation.Longitude, Latitude = flightInitialLocation.Latitude };
             Location location = new Location();
-            var segments =  _context.Segments.Where(s=>s.FlightId == flightPlan.FlightId);
+            var segments = _context.Segments.Where(s => s.FlightId == flightPlan.FlightId);
             foreach (Segment segment in segments)
             {
                 if (time.AddSeconds(segment.TimeSpanSeconds).CompareTo(dateTime) > 0)
@@ -319,7 +311,7 @@ namespace FlightControlWeb
                     var velocityX = (segment.Latitude - prevLocation.Latitude) / (segment.TimeSpanSeconds);
                     location.Latitude = prevLocation.Latitude + velocityX * (int)DeltaTime.TotalSeconds;
                     var velocityY = (segment.Longitude - prevLocation.Longitude) / (segment.TimeSpanSeconds);
-                    location.Longitude = prevLocation.Longitude +  velocityY * (int)DeltaTime.TotalSeconds;
+                    location.Longitude = prevLocation.Longitude + velocityY * (int)DeltaTime.TotalSeconds;
                     return location;
                 }
                 prevLocation.Latitude = segment.Latitude;
@@ -337,5 +329,47 @@ namespace FlightControlWeb
             }
             return false;
         }
+
+        private async Task<IEnumerable<Flight>> GetInternalFlights(DateTime dateTime)
+        {
+            List<Flight> flights = new List<Flight>();
+            var flightsPlans = await _context.FlightsPlans.ToListAsync();
+
+            foreach (FlightPlan fp in flightsPlans)
+            {
+                try
+                {
+                    await CreateFlight(dateTime, flights, fp);
+                }
+                catch { }
+            }
+            return flights;
+
+        }
+
+        private async Task CreateFlight(DateTime dateTime, List<Flight> flights, FlightPlan fp)
+        {
+            InitialLocation initialLocation = await _context.InitialLocation.FindAsync(fp.FlightId);
+            var landingTime = await LandingTime(fp);
+            if (initialLocation != null && ((initialLocation.DateTime.CompareTo(dateTime) < 0 && landingTime.CompareTo(dateTime) > 0) || initialLocation.DateTime.CompareTo(dateTime) == 0))
+            {
+                Location location = await GetFlightLocation(fp, dateTime);
+                if (location != null)
+                {
+                    flights.Add(new Flight
+                    {
+                        FlightId = fp.FlightId,
+                        Longitude = location.Longitude,
+                        Latitude = location.Latitude,
+                        Passengers = fp.Passengers,
+                        CompanyName = fp.CompanyName,
+                        DateTime = dateTime,
+                        IsExternal = false
+                    });
+
+                }
+            }
+        }
+
     }
 }

@@ -23,22 +23,36 @@ namespace FlightControlWeb.Controllers
 
         // GET: api/Servers
         [HttpGet]
-        public IEnumerable<Server> GetServers()
+        public async Task<IEnumerable<Server>> GetServers()
         {
-            return  _context.GetServers();
+            try
+            {
+                return await _context.GetServers();
+            }
+            catch {
+                return null;
+            }
         }
         // POST: api/Servers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public  ActionResult<Server> PostServer(Server server)
-        { 
+        {
+            try
+            {
                 int result = _context.AddServer(server);
                 if (result == -1)
                 {
                     return Conflict();
                 }
-            return StatusCode(201);
+                return StatusCode(201);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+           
 
             
         }

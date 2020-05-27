@@ -25,14 +25,18 @@ namespace FlightControlWeb.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FlightPlanDto>> GetFlightPlan(string id)
         {
-            var flightPlan = await _context.GetFlightPlan(id);
-
-            if (flightPlan == null)
+            try
             {
-                return NotFound();
-            }
+                var flightPlan = await _context.GetFlightPlan(id);
 
-            return flightPlan;
+                if (flightPlan == null)
+                {
+                    return NotFound();
+                }
+
+                return flightPlan;
+            }
+            catch { return StatusCode(500); }
         }
 
 
@@ -51,7 +55,7 @@ namespace FlightControlWeb.Controllers
 
             catch (DbUpdateException)
             {
-                    throw;
+                return StatusCode(500);
             }
         }
   
