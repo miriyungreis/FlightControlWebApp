@@ -3,16 +3,7 @@ import axios from "axios";
 import Dropzone from "react-dropzone";
 import { toast } from "react-toastify";
 
-// const api = axios.create({
-//   baseURL: `http://ronyut4.atwebpages.com/ap2`,
-// });
 /*** Drop Zone style and logic - taken from react dz ***/
-const AxiosError = require("axios-error");
-const divStyle = {
-  // backgroundColor: "blue",
-  color: "blue",
-};
-
 export default class DropZone extends Component {
   state = {
     style: "",
@@ -31,39 +22,13 @@ export default class DropZone extends Component {
 
   postFlight = async (contents) => {
     try {
-      let res = await axios.post("/api/FlightPlan/", contents).then((res) => {
+      await axios.post("/api/FlightPlan/", contents).then((res) => {
         console.log("POSTING FLIGHT PLAN: " + res.status + res.data);
         console.log(res);
-        toast.success("New Flight Created");
+        toast.success("Posting New Flight!");
       });
     } catch (error) {
-      // Error 😨
-      if (error.response) {
-        /*
-         * The request was made and the server responded with a
-         * status code that falls out of the range of 2xx
-         */
-        toast.error("Error: " + error.response.data);
-        toast.error("Error: " + error.response.status);
-        toast.error("Error: " + error.response.headers);
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        /*
-         * The request was made but no response was received, `error.request`
-         * is an instance of XMLHttpRequest in the browser and an instance
-         * of http.ClientRequest in Node.js
-         */
-        toast.error("Error: The request was made but no response was received");
-        console.log(error.request);
-      } else {
-        // Something happened in setting up the request and triggered an Error
-        toast.error("Error: " + error.message);
-        console.log(error.message);
-      }
-      console.log(new AxiosError(error));
-      toast.error(error);
+      this.props.errorHandle(error);
     }
   };
 
@@ -111,7 +76,7 @@ export default class DropZone extends Component {
       >
         {({ getRootProps, getInputProps }) => (
           <section>
-            <div {...getRootProps({ className: "dropzone" })} style={divStyle}>
+            <div {...getRootProps({ className: "dropzone" })}>
               <input {...getInputProps()} />
               {children}
             </div>

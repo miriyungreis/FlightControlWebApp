@@ -218,6 +218,8 @@ h4 {
   font-weight: bold;
 }
 
+/******************* dropzone *******************/
+
 .my-dropzone {
   align-items: center;
   padding: 1rem;
@@ -233,3 +235,21 @@ h4 {
   outline: none;
   transition: border 0.24s ease-in-out;
 }
+
+/******************* svg-icon *******************/
+
+/* svg {
+  width: 70px;
+  height: 70px;
+}
+svg:hover {
+  fill: red;
+} */
+
+/* .icon {
+  fill: #000;
+}
+
+.icon:hover {
+  fill: #fff;
+} */
