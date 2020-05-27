@@ -43,7 +43,7 @@ namespace FlightControlWeb
             };
             FromSegmentsDtoToSegments(flightPlanDto.Segments, flightPlan.Segments, flightId);
 
-            _context.FlightsPlans.Add(flightPlan);
+            await _context.FlightsPlans.AddAsync(flightPlan);
             try
             {
                 await _context.SaveChangesAsync();
@@ -130,7 +130,8 @@ namespace FlightControlWeb
                 
                 return flightPlanDto;
             }
-            foreach (Server s in _context.Servers)
+            var servers = await _context.Servers.ToListAsync();
+            foreach (Server s in servers)
             {
                 try
                 {
@@ -151,7 +152,7 @@ namespace FlightControlWeb
                 }
                 catch { }
             }
-            //Todo
+           
             return null;
         }
 
@@ -160,14 +161,15 @@ namespace FlightControlWeb
         {
             List<Flight> flights = new List<Flight>();
             DateTime dateTime = DateTimeOffset.Parse(strDateTime).DateTime;
+            var flightsPlans = await _context.FlightsPlans.ToListAsync();
 
-
-            foreach (FlightPlan fp in _context.FlightsPlans)
+            foreach (FlightPlan fp in flightsPlans)
             {
-                InitialLocation initialLocation = _context.InitialLocation.FindAsync(fp.FlightId).Result;
-                if (initialLocation!=null && ((initialLocation.DateTime.CompareTo(dateTime) < 0 && LandingTime(fp).CompareTo(dateTime) > 0)||initialLocation.DateTime.CompareTo(dateTime)==0))
+                InitialLocation initialLocation = await _context.InitialLocation.FindAsync(fp.FlightId);
+                var landingTime = await LandingTime(fp);
+                if (initialLocation!=null && ((initialLocation.DateTime.CompareTo(dateTime) < 0 && landingTime.CompareTo(dateTime) > 0)||initialLocation.DateTime.CompareTo(dateTime)==0))
                 {
-                    Location location = GetFlightLocation(fp, dateTime);
+                    Location location = await GetFlightLocation(fp, dateTime);
                     if (location != null)
                     {
                         flights.Add(new Flight
@@ -190,7 +192,8 @@ namespace FlightControlWeb
 
 
             //todo
-            foreach (Server s in _context.Servers)
+            var servers = await _context.Servers.ToListAsync();
+            foreach (Server s in servers)
             {
                 try
                 {
@@ -213,8 +216,12 @@ namespace FlightControlWeb
                             {
                                 f.IsExternal = true;
                                 flights.Add(f);
+                                try { 
                                 await _context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId = s.ServerId });
+
                                 await _context.SaveChangesAsync();
+                                }
+                                catch { }
                             }
 
                         }
@@ -284,9 +291,9 @@ namespace FlightControlWeb
             }
         }
 
-        private DateTime LandingTime(FlightPlan flightPlan)
+        private async Task<DateTime> LandingTime(FlightPlan flightPlan)
         {
-            var initialLocation = _context.InitialLocation.FindAsync(flightPlan.FlightId).Result;
+            var initialLocation = await _context.InitialLocation.FindAsync(flightPlan.FlightId);
             DateTime landingDateTime = initialLocation.DateTime;
             var segments = _context.Segments.Where(s => s.FlightId == flightPlan.FlightId);
             foreach (Segment s in segments)
@@ -296,13 +303,14 @@ namespace FlightControlWeb
             return landingDateTime;
         }
 
-        private Location GetFlightLocation(FlightPlan flightPlan, DateTime dateTime)
+        private async Task<Location> GetFlightLocation(FlightPlan flightPlan, DateTime dateTime)
         {
-            DateTime time = flightPlan.InitialLocation.DateTime;
+            var flightInitialLocation = await _context.InitialLocation.FindAsync(flightPlan.FlightId);
+            DateTime time = flightInitialLocation.DateTime;
             DateTime prevTime = time;
-            Location prevLocation = new Location { Longitude = flightPlan.InitialLocation.Longitude, Latitude = flightPlan.InitialLocation.Latitude };
+            Location prevLocation = new Location { Longitude = flightInitialLocation.Longitude, Latitude = flightInitialLocation.Latitude };
             Location location = new Location();
-            var segments = flightPlan.Segments.OrderBy(s => s.Id);
+            var segments =  _context.Segments.Where(s=>s.FlightId == flightPlan.FlightId);
             foreach (Segment segment in segments)
             {
                 if (time.AddSeconds(segment.TimeSpanSeconds).CompareTo(dateTime) > 0)
