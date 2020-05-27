@@ -1,30 +1,39 @@
 # Project Name : "Flight Control Web Application"
 
 # Description  
-Web Application using WPF .NET architecture with MVVM Architecture.
-in this app, we sugest a user interface to connect a server (Flight Gear in future)
-that stimulates a flight gear airplane flight. using the controllers we can control the
-rudder throttle aileron and elevator of the plane.
-the user sees the dashboard of flight in front and a location on the world map.
+ASP.net core Web App that manages flights and present the client available flights relative to its time in UTC. the app supports flights from its own server (internal) and also external servers. 
+
+![Alt text](/FlightControlWeb/ClientApp/src/images/flight_screen.PNG?raw=true "Optional Title")
+![Alt text](/FlightControlWeb/ClientApp/src/images/main_screen.PNG?raw=true "Optional Title")
+
 
 Front - End:
 -----------------------------
-* React Js
-* Reactstrap
+* React Js (16.0.0 - statefull calss components)
+* Reactstrap \ Boottstrap
+* Map Module - Leaflet Open Source StreetMap
+* Axios - for REST API calls
 * Node.js
 * Java Script 6, HTML5 , CSS 3
-* Visual Studio Code and Visual Studio
+* Webpack for bundling
+* Development Environment: Visual Studio Code
 
 Back - End:
 -----------------------------
 * ASP.NET Core Web API
-* SQLite
+* SQLite with EntityFramework
+* Development Environment: Visual Studio
 
-
+# System Requiremnets  
+1. Supported Web Browsers: Edge, Chrome
+2. NodeJS
+3. Visual Studio
 
 # Installation  
-1. Install Node.Js, npm, npx
-2. 
+1. We bundled all the client js code into bundle.js using Webpack
+2. once you run the app that shold work with no problems
+3. if problem was not opened please check you have all System Requirements
+4. if troubled yet, please contact us
 
 
 # Support  
@@ -41,11 +50,11 @@ none.
 bla bla
 
 # License  
-MIT - ?
+MIT
 
 # Project status  
 on progress
 
-# Git Hub Link ~ ~ for instructors 89210
+# Git Hub Link ~ ~ for instructors 89111
 https://github.com/miriyungreis/FlightControlWebApp
 
