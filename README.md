@@ -11,6 +11,7 @@ Front - End:
 -----------------------------
 * React Js (16.0.0 - statefull calss components)
 * Reactstrap \ Boottstrap
+* Map Module - Leaflet Open Source StreetMap
 * Axios - for REST API calls
 * Node.js
 * Java Script 6, HTML5 , CSS 3
@@ -26,8 +27,7 @@ Back - End:
 # System Requiremnets  
 1. Supported Web Browsers: Edge, Chrome
 2. NodeJS
-3. Visual Studio 2019
-4. Windows 10
+3. Visual Studio
 
 # Installation  
 1. We bundled all the client js code into bundle.js using Webpack
@@ -50,7 +50,7 @@ none.
 bla bla
 
 # License  
-MIT - ?
+MIT
 
 # Project status  
 on progress
