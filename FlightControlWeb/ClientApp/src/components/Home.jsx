@@ -55,7 +55,7 @@ export class Home extends Component {
   /* GET FLIGHTS relative to time */
   getFlights = async () => {
     try {
-      let res = await axios
+      await axios
         .get("/api/Flights?relative_to=" + this.state.date + "&sync_all")
         .then((res) => {
           console.log("GET FLIGHTS: " + res.status + " " + res.data);
@@ -69,7 +69,7 @@ export class Home extends Component {
   /* GET FLIGHT PLAN */
   getFlightPlan = async () => {
     try {
-      let res = await axios
+      await axios
         .get("api/FlightPlan/" + this.state.clicked_flight_id)
         .then((res) => {
           console.log("GETTING FLIGHT PLAN: " + res.status + " " + res.data);
@@ -86,7 +86,7 @@ export class Home extends Component {
   onDeleteFlightClick = async (flight_id) => {
     console.log("Deleting flight: " + flight_id);
     try {
-      let res = await axios.delete("/api/Flights/" + flight_id).then((res) => {
+      await axios.delete("/api/Flights/" + flight_id).then((res) => {
         this.setState({ clicked_flight: null, clicked_flight_plan: null });
         console.log("DELETING FLIGHT PLAN: " + res.status + res.data);
         toast.info("Deleting Flight " + flight_id);
@@ -124,9 +124,19 @@ export class Home extends Component {
        * The request was made and the server responded with a
        * status code that falls out of the range of 2xx
        */
-      toast.error("Error: " + error.response.data);
-      toast.error("Error: " + error.response.status);
-      toast.error("Error: " + error.response.headers);
+      error.response.status === 400
+        ? toast.error(
+            "Error in Request, Please Check Your JSON Format / Request Format!"
+          )
+        : toast.error(
+            "Error In Response From Server, Status Code: " +
+              error.response.status +
+              " Data: " +
+              error.response.data +
+              "Headers: " +
+              error.response.headers
+          );
+
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
@@ -172,7 +182,7 @@ export class Home extends Component {
         </div>
 
         <div className="my-flights">
-          <DropZone>
+          <DropZone errorHandle={this.errorHandle}>
             <MyFlights
               my_flights={this.state.my_flights}
               onFlightClick={this.onFlightClick}
@@ -183,15 +193,14 @@ export class Home extends Component {
         </div>
 
         <div className="flight-data">
-          <h4>Flight Details</h4>
+          <h4>Flight Details, UTC: {this.state.date}</h4>
+
           <FlightDetails
             clicked_flight_id={this.state.clicked_flight_id}
             my_flights={this.state.my_flights}
             clicked_flight_plan={this.state.clicked_flight_plan}
           ></FlightDetails>
         </div>
-        {/* <h4>Time Now in UTC: {this.state.date}</h4>
-        <h4>Time Now in UTC: {this.truncate(this.getUTCdate(), 5)}</h4> */}
       </div>
     );
   }
