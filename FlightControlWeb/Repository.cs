@@ -301,34 +301,53 @@ namespace FlightControlWeb
             DateTime time = flightInitialLocation.DateTime;
             DateTime prevTime = time;
             Location prevLocation = new Location { Longitude = flightInitialLocation.Longitude, Latitude = flightInitialLocation.Latitude };
-            //Location location = new Location();
+            Location location = new Location();
+            TimeSpan flightTime = dateTime - flightInitialLocation.DateTime;
             var segments = _context.Segments.Where(s => s.FlightId == flightPlan.FlightId);
+            Segment prevSegment = null;
             foreach (Segment segment in segments)
             {
-                if (time.AddSeconds(segment.TimeSpanSeconds).CompareTo(dateTime) > 0 || time.AddSeconds(segment.TimeSpanSeconds).CompareTo(dateTime)==0)
+                flightTime = flightTime - TimeSpan.FromSeconds(segment.TimeSpanSeconds);
+                if (flightTime.TotalSeconds < 0 || flightTime.TotalSeconds == 0)
                 {
-                    TimeSpan deltaTime = dateTime - prevTime;
-                    return NewMethod(deltaTime, prevLocation, segment);
+                    if (flightTime.TotalSeconds == 0)
+                    {
+                        return new Location { Latitude = segment.Latitude, Longitude = segment.Longitude };
+                    }
+                    double ratio = (segment.TimeSpanSeconds + flightTime.TotalSeconds) / (double)segment.TimeSpanSeconds;
+                    
+
+                    if (prevSegment == null)
+                    {
+                        location.Latitude = flightInitialLocation.Latitude + ratio * (segment.Latitude - flightInitialLocation.Latitude);
+                        location.Longitude = flightInitialLocation.Longitude + ratio * (segment.Longitude - flightInitialLocation.Longitude);
+                        return location;
+                    }
+                    location.Latitude = prevSegment.Latitude + (ratio * (segment.Latitude - prevSegment.Latitude));
+                    location.Longitude = prevSegment.Longitude + (ratio * (segment.Longitude - prevSegment.Longitude));
+                    return location;
                 }
-                prevLocation.Latitude = segment.Latitude;
-                prevLocation.Longitude = segment.Longitude;
-                prevTime = time.AddSeconds(segment.TimeSpanSeconds);
+                prevSegment = segment;
             }
+            
+        
             return null;
         }
 
-        private static Location NewMethod(TimeSpan deltaTime, Location prevLocation, Segment segment)
+
+        private static Location NewMethod2(TimeSpan deltaTime, Location prevLocation, Segment segment)
         {
             Location location = new Location();
+            
             //int direction = 1;
             //if (prevLocation.Latitude > segment.Latitude)
-                //direction = -1;
-            var velocityX = (segment.Latitude - prevLocation.Latitude) / (segment.TimeSpanSeconds);
+            //direction = -1;
+            /*var velocityX = (segment.Latitude - prevLocation.Latitude) / (segment.TimeSpanSeconds);
             
             
-            location.Latitude = prevLocation.Latitude + velocityX * (int)deltaTime.TotalSeconds;
+            location.Latitude = prevLocation.Latitude + velocityX * deltaTime.TotalSeconds;
             var velocityY = (segment.Longitude - prevLocation.Longitude) / (segment.TimeSpanSeconds);
-            location.Longitude = prevLocation.Longitude + velocityY * (int)deltaTime.TotalSeconds;
+            location.Longitude = prevLocation.Longitude + velocityY * deltaTime.TotalSeconds;*/
             return location;
         }
 
