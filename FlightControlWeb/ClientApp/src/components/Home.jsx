@@ -14,7 +14,7 @@ export class Home extends Component {
   static displayName = Home.name;
 
   componentDidMount() {
-    const getFlightsInterval = setInterval(this.getFlights, 1000);
+    const getFlightsInterval = setInterval(this.getFlights, 3000);
     const getLocalTimeInterval = setInterval(this.getClock, 1000);
     this.setState(
       {
