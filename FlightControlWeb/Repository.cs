@@ -304,7 +304,7 @@ namespace FlightControlWeb
             Location location = new Location();
             TimeSpan flightTime = dateTime - flightInitialLocation.DateTime;
             var segments = _context.Segments.Where(s => s.FlightId == flightPlan.FlightId);
-            Segment prevSegment = null;
+            SegmentDto prevSegment = null;
             foreach (Segment segment in segments)
             {
                 flightTime = flightTime - TimeSpan.FromSeconds(segment.TimeSpanSeconds);
@@ -314,7 +314,7 @@ namespace FlightControlWeb
                     {
                         return new Location { Latitude = segment.Latitude, Longitude = segment.Longitude };
                     }
-                    double ratio = (segment.TimeSpanSeconds + flightTime.TotalSeconds) / (double)segment.TimeSpanSeconds;
+                    double ratio = ((segment.TimeSpanSeconds + flightTime.TotalSeconds) / (double)segment.TimeSpanSeconds);
                     
 
                     if (prevSegment == null)
@@ -327,7 +327,7 @@ namespace FlightControlWeb
                     location.Longitude = prevSegment.Longitude + (ratio * (segment.Longitude - prevSegment.Longitude));
                     return location;
                 }
-                prevSegment = segment;
+                prevSegment = new SegmentDto { Latitude = segment.Latitude, Longitude = segment.Longitude, TimeSpanSeconds = segment.TimeSpanSeconds };
             }
             
         
