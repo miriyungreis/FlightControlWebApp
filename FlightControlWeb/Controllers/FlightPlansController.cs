@@ -27,14 +27,7 @@ namespace FlightControlWeb.Controllers
         {
             try
             {
-                var flightPlan = await _context.GetFlightPlan(id);
-
-                if (flightPlan == null)
-                {
-                    return NotFound();
-                }
-
-                return flightPlan;
+                return await _context.GetFlightPlan(id);
             }
             catch { return StatusCode(500); }
         }
@@ -50,10 +43,12 @@ namespace FlightControlWeb.Controllers
             try
             {
               var flightPlan = await _context.AddFlightPlan(flightPlanDto);
-              return CreatedAtAction("GetFlightPlan", new { id = flightPlan.Value.FlightId }, flightPlanDto);
+              if (flightPlan != null) {
+                    return CreatedAtAction("GetFlightPlan", new { id = flightPlan.Value.FlightId }, flightPlanDto);
+              }
+                return StatusCode(500);
             }
-
-            catch (DbUpdateException)
+            catch 
             {
                 return StatusCode(500);
             }

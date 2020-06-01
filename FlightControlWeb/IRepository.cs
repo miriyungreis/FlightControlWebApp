@@ -15,8 +15,8 @@ namespace FlightControlWeb
         Task<ActionResult<FlightPlanDto>> GetFlightPlan(string id);
         Task<ActionResult<FlightPlan>> AddFlightPlan(FlightPlanDto flightPlanDto);
         Task<IEnumerable<Server>> GetServers();
-        int AddServer(Server server);
-        bool DeleteServer(string id);
+        Task<ActionResult<Server>> AddServer(Server server);
+        Task<ActionResult<Server>> DeleteServer(string id);
 
     }
 }

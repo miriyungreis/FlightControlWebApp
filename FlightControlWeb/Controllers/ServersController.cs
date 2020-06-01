@@ -37,38 +37,16 @@ namespace FlightControlWeb.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public  ActionResult<Server> PostServer(Server server)
+        public  async Task<ActionResult<Server>> PostServer(Server server)
         {
-            try
-            {
-                int result = _context.AddServer(server);
-                if (result == -1)
-                {
-                    return Conflict();
-                }
-                return StatusCode(201);
-            }
-            catch
-            {
-                return BadRequest();
-            }
-           
-
-            
+            return  await _context.AddServer(server);
         }
 
         // DELETE: api/Servers/5
         [HttpDelete("{id}")]
-        public ActionResult<Server> DeleteServer(string id)
+        public async Task<ActionResult<Server>> DeleteServer(string id)
         {
-            var result = _context.DeleteServer(id);
-            if (!result)
-            {
-                return NotFound();
-            }
-
-            return NoContent();
-        
+            return await _context.DeleteServer(id);
         }
 
         

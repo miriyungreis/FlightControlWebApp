@@ -57,25 +57,29 @@ namespace FlightControlWeb
             return flightPlan;
         }
 
-        public int AddServer(Server server)
+        public async Task<ActionResult<Server>> AddServer(Server server)
         {
-            _context.Servers.Add(server);
+            var result = new Microsoft.AspNetCore.Mvc.ContentResult();
+            await _context.Servers.AddAsync(server);
             try
             {
-                _context.SaveChangesAsync();
+                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
-            {
+            { 
                 if (ServerExists(server.ServerId))
                 {
-                    return -1;
+                    result.StatusCode = 400;
+                    result.Content = "server allready exist\n";
                 }
                 else
                 {
-                    throw;
+                    result.StatusCode = 500;
                 }
+                return result;
             }
-            return 0;
+            result.StatusCode = 201;
+            return result;
         }
 
         public bool DeleteFlight(string id)
@@ -97,16 +101,27 @@ namespace FlightControlWeb
             return false;
         }
 
-        public bool DeleteServer(string id)
+        public async Task<ActionResult<Server>> DeleteServer(string id)
         {
+            var result = new Microsoft.AspNetCore.Mvc.ContentResult();
+
             if (!ServerExists(id))
             {
-                return false;
+                result.StatusCode = 400;
+                result.Content = "server does not exist";
+                return result;
             }
             var server = _context.Servers.Find(id);
-            _context.Servers.Remove(server);
-            _context.SaveChangesAsync();
-            return true;
+            try {
+                _context.Servers.Remove(server);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                result.StatusCode = 500;
+            }
+            result.StatusCode = 204;
+            return result;
         }
 
         public async Task<ActionResult<FlightPlanDto>> GetFlightPlan(string id)
@@ -131,30 +146,49 @@ namespace FlightControlWeb
 
                 return flightPlanDto;
             }
-            var servers = await _context.Servers.ToListAsync();
-            foreach (Server s in servers)
+            var result = new Microsoft.AspNetCore.Mvc.ContentResult();
+            try
             {
-                try
+                //find the server which the requested flight plan came from
+                var flightServerMap = await _context.Map.FindAsync(id);
+                if (flightServerMap != null)
                 {
-                    var url = s.ServerURL + "/api/FlightPlan/" + id;
-                    HttpResponseMessage response = await _client.GetAsync(url);
-                    if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
+                    var server = await _context.Servers.FindAsync(flightServerMap.ServerId);
+                    if (server != null)
                     {
-                        var content = response.Content;
-                        var data = await content.ReadAsStringAsync();
-                        var serializeOptions = new JsonSerializerOptions
-                        {
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                            WriteIndented = true
-                        };
-                        var externalFlightPlan = System.Text.Json.JsonSerializer.Deserialize<FlightPlanDto>(data, serializeOptions);
-                        return externalFlightPlan;
-                    }
-                }
-                catch { }
-            }
 
-            return null;
+                        var url = server.ServerURL + "/api/FlightPlan/" + id; ;
+                        HttpResponseMessage response = await _client.GetAsync(url);
+                        if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
+                        {
+                            var content = response.Content;
+                            var data = await content.ReadAsStringAsync();
+                            var serializeOptions = new JsonSerializerOptions
+                            {
+                                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                                WriteIndented = true
+                            };
+                            var externalFlightPlan = System.Text.Json.JsonSerializer.Deserialize<FlightPlanDto>(data, serializeOptions);
+                            return externalFlightPlan;
+                        }
+                    }
+                    
+                    result.StatusCode = 500;
+                    result.Content = "the server that contains the requested flight is unavailable\n";
+                    return result;
+                }
+                
+                
+                result.StatusCode = 400;
+                result.Content = "the flight you request does not exist in any internal nor external air control server\n";
+                return result;
+                
+            }
+            catch {
+                result.StatusCode = 500;
+                return result;
+            }
+            
         }
 
 
@@ -216,12 +250,17 @@ namespace FlightControlWeb
                 f.IsExternal = true;
                 try
                 {
-                    await _context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId = s.ServerId });
+                    if (_context.Map.FindAsync(f.FlightId) == null) { 
+                        await _context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId = s.ServerId });
 
-                    await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
+                        
+                    }
                     flights.Add(f);
+
                 }
                 catch { }
+            
             }
         }
 
