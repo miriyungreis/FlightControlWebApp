@@ -1,7 +1,7 @@
-﻿import React, { Component } from "react";
-import { Table } from "reactstrap";
-import PropTypes from "prop-types";
-import FlightItem from "./FlightItem";
+﻿import React, { Component } from 'react';
+import { Table } from 'reactstrap';
+import PropTypes from 'prop-types';
+import FlightItem from './FlightItem.jsx';
 
 /*** the component - my flights ***/
 export class MyFlights extends Component {
