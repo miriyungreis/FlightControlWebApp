@@ -1,19 +1,19 @@
-import React, { Component } from "react";
-import axios from "axios";
-import Dropzone from "react-dropzone";
-import { toast } from "react-toastify";
+import React, { Component } from 'react';
+import axios from 'axios';
+import Dropzone from 'react-dropzone';
+import { toast } from 'react-toastify';
 
-/*** Drop Zone style and logic - taken from react dz ***/
+/** *  Drop Zone style and logic - taken from react dz  ** */
 export default class DropZone extends Component {
   state = {
-    style: "",
+    style: '',
     dragEntered: false,
   };
 
   onDrop = async ([file]) => {
-    var reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = (e) => {
-      var contents = e.target.result;
+      const contents = e.target.result;
       this.postFlight(JSON.parse(contents));
     };
     reader.readAsText(file);
@@ -22,10 +22,10 @@ export default class DropZone extends Component {
 
   postFlight = async (contents) => {
     try {
-      await axios.post("/api/FlightPlan/", contents).then((res) => {
-        console.log("POSTING FLIGHT PLAN: " + res.status + res.data);
+      await axios.post('/api/FlightPlan/', contents).then((res) => {
+        console.log(`POSTING FLIGHT PLAN: ${res.status}${res.data}`);
         console.log(res);
-        toast.success("Posting New Flight!");
+        toast.success('Posting New Flight!');
       });
     } catch (error) {
       this.props.errorHandle(error);
@@ -45,23 +45,9 @@ export default class DropZone extends Component {
     if (this.state.dragEntered) {
       children = (
         <div className="flights-container my-dropzone">
-          <h4>Drag and Drop</h4>
-          <img
-            alt="description"
-            src={require("../../images/the_drop_box_folder.ico")}
-          />
-          <img
-            alt="description"
-            src={require("../../images/the_drop_box_folder.ico")}
-          />
-          <img
-            alt="description"
-            src={require("../../images/the_drop_box_folder.ico")}
-          />
-          <img
-            alt="description"
-            src={require("../../images/the_drop_box_folder.ico")}
-          />
+          <h4>
+            Drag and Drop <br /> Please Drop Here <br /> A Valid JSON <br /> Flight Plan
+          </h4>
         </div>
       );
     } else {
@@ -69,14 +55,14 @@ export default class DropZone extends Component {
     }
     return (
       <Dropzone
-        noClick={true}
+        noClick
         onDrop={this.onDrop}
         onDragEnter={this.onDragEnter}
         onDragLeave={this.onDragLeave}
       >
         {({ getRootProps, getInputProps }) => (
           <section>
-            <div {...getRootProps({ className: "dropzone" })}>
+            <div {...getRootProps({ className: 'dropzone' })}>
               <input {...getInputProps()} />
               {children}
             </div>

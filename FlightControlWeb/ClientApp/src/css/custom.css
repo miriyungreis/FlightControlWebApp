@@ -31,7 +31,7 @@ header {
 
 nav {
   border-top: #0b222c solid 5px;
-  border-bottom: #0b222c solid 5px;
+  /* border-bottom: #0b222c solid 5px; */
   box-sizing: border-box;
   background-color: #5f7481;
 }
@@ -136,8 +136,8 @@ html {
 
 .my-flights {
   grid-area: my-flights;
-  min-height: 82vh;
-  max-height: 82vh;
+  min-height: 92vh;
+  max-height: 92vh;
 
   background-color: var(--white_50);
   display: flex;
@@ -149,8 +149,8 @@ html {
 }
 
 .flights-container {
-  min-height: 82vh;
-  max-height: 82vh;
+  min-height: 92vh;
+  max-height: 92vh;
   display: grid;
   gap: 2vh;
   grid-template-areas:
@@ -161,8 +161,8 @@ html {
   grid-area: my-flights-container;
   align-items: center;
   padding: 1rem;
-  min-height: 41vh;
-  max-height: 41vh;
+  min-height: 46vh;
+  max-height: 46vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -173,8 +173,8 @@ html {
 .external-flights-container {
   grid-area: external-flights-container;
   align-items: center;
-  min-height: 41vh;
-  max-height: 41vh;
+  min-height: 46vh;
+  max-height: 46vh;
   padding: 1rem;
   overflow-y: auto;
   display: flex;
@@ -186,8 +186,8 @@ html {
 
 .flight-data {
   grid-area: flight-data;
-  min-height: 20vh;
-  max-height: 20vh;
+  min-height: 30vh;
+  max-height: 30vh;
   overflow: auto;
   background-color: var(--white_50);
   padding: 1rem;
@@ -235,21 +235,3 @@ h4 {
   outline: none;
   transition: border 0.24s ease-in-out;
 }
-
-/******************* svg-icon *******************/
-
-/* svg {
-  width: 70px;
-  height: 70px;
-}
-svg:hover {
-  fill: red;
-} */
-
-/* .icon {
-  fill: #000;
-}
-
-.icon:hover {
-  fill: #fff;
-} */
