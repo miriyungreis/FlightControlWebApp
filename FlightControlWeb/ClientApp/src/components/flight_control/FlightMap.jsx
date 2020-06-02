@@ -1,7 +1,7 @@
-﻿import React, { Component } from "react";
-import { Map, TileLayer, Polyline } from "react-leaflet";
-import FlightMarker from "./FlightMarker.jsx";
-import PropTypes from "prop-types";
+﻿import React, { Component } from 'react';
+import { Map, TileLayer, Polyline } from 'react-leaflet';
+import FlightMarker from './FlightMarker.jsx';
+import PropTypes from 'prop-types';
 
 export default class FlightMap extends Component {
   loadFlightsOnMap() {
@@ -34,6 +34,12 @@ export default class FlightMap extends Component {
     }
   };
 
+  isClickedFlightActive() {
+    return this.props.my_flights.find((flight) => {
+      return flight.flight_id === this.props.clicked_flight_id;
+    });
+  }
+
   render() {
     return (
       <Map center={[0, 0]} zoom={2} onclick={this.props.onMapClick.bind(this)}>
@@ -42,7 +48,7 @@ export default class FlightMap extends Component {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
         {this.loadFlightsOnMap()}
-        {this.props.clicked_flight_plan !== null && (
+        {this.props.clicked_flight_plan !== null && this.isClickedFlightActive() && (
           <Polyline color="lime" positions={this.getFlightPolyline()} />
         )}
       </Map>

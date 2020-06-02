@@ -113,14 +113,12 @@ export class Home extends Component {
       error.response.status === 400
         ? toast.error('Error in Request, Please Check Your JSON Format / Request Format!')
         : toast.error(
-            'Error In Response From Server, Status Code: ' +
+            'Error In Response From Server!  Code: ' +
               error.response.status +
-              ' Data: ' +
-              error.response.data +
-              'Headers: ' +
-              error.response.headers,
+              ' ' +
+              error.response.statusText,
           );
-
+      console.log(error.response);
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
