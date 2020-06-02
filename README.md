@@ -3,8 +3,7 @@
 # Description  
 ASP.net core Web App that manages flights and present the client available flights relative to its time in UTC. the app supports flights from its own server (internal) and also external servers. 
 
-![Alt text](/FlightControlWeb/ClientApp/src/images/flight_screen.PNG?raw=true "Optional Title")
-![Alt text](/FlightControlWeb/ClientApp/src/images/main_screen.PNG?raw=true "Optional Title")
+![Alt ScreenShot](/FlightControlWeb/ClientApp/src/images/flight_screen.PNG?raw=true "ScreenShot 1")
 
 
 Front - End:
@@ -16,13 +15,16 @@ Front - End:
 * Node.js
 * Java Script 6, HTML5 , CSS 3
 * Webpack for bundling
+* ESLint for coding conventions (Reccomended)
 * Development Environment: Visual Studio Code
 
 Back - End:
 -----------------------------
-* ASP.NET Core Web API
+* ASP.NET Core 3.1 Framework
+* Web API Server with REST API (HTTP Requests)
 * SQLite with EntityFramework
 * Development Environment: Visual Studio
+* Unit Tests using moq
 
 # System Requiremnets  
 1. Supported Web Browsers: Edge, Chrome
@@ -32,7 +34,7 @@ Back - End:
 # Installation  
 1. We bundled all the client js code into bundle.js using Webpack
 2. once you run the app that shold work with no problems
-3. if problem was not opened please check you have all System Requirements
+3. if a problem occured please check you have all System Requirements
 4. if troubled yet, please contact us
 
 
@@ -47,13 +49,13 @@ none.
 none.
 
 # Authors and acknowledgment  
-bla bla
+Arye182, miriyungreis
 
 # License  
 MIT
 
 # Project status  
-on progress
+bundled, pre release
 
 # Git Hub Link ~ ~ for instructors 89111
 https://github.com/miriyungreis/FlightControlWebApp

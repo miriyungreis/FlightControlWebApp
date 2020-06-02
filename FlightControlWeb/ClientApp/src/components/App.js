@@ -1,7 +1,6 @@
-import React, { Component } from "react";
-import { Layout } from "../components/Layout.jsx";
-import { Home } from "../components/Home.jsx";
-import "../css/custom.css";
+import React, { Component } from 'react';
+import { Layout } from '../components/Layout.jsx';
+import { Home } from '../components/Home.jsx';
 
 class App extends Component {
   render() {

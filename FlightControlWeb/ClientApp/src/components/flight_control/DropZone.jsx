@@ -11,14 +11,29 @@ export default class DropZone extends Component {
   };
 
   onDrop = async ([file]) => {
+    console.log('Starting On Drop!');
     const reader = new FileReader();
     reader.onload = (e) => {
       const contents = e.target.result;
-      this.postFlight(JSON.parse(contents));
+      console.log('File Loaded!');
+      let content = this.tryParseJsonFile(contents);
+      content != null && this.postFlight(content);
     };
     reader.readAsText(file);
     this.setState({ dragEntered: false });
   };
+
+  tryParseJsonFile(contents) {
+    try {
+      let content = JSON.parse(contents);
+      return content;
+    } catch (error) {
+      toast.error(error);
+      toast.error('json flight plan is not by formatt rules!');
+      console.log(error);
+      return null;
+    }
+  }
 
   postFlight = async (contents) => {
     try {
@@ -28,6 +43,7 @@ export default class DropZone extends Component {
         toast.success('Posting New Flight!');
       });
     } catch (error) {
+      toast.error('problem in json file');
       this.props.errorHandle(error);
     }
   };
