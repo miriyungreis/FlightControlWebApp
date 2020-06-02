@@ -340,4 +340,4 @@ ASALocalRun/
 healthchecksdb
 
 # out folder
-../out
+./out
