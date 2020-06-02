@@ -341,3 +341,5 @@ healthchecksdb
 
 # out folder
 ./out
+/out
+/wwwroot
