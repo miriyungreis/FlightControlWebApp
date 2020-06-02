@@ -82,8 +82,9 @@ namespace FlightControlWeb
             return result;
         }
 
-        public bool DeleteFlight(string id)
+        public async Task<ActionResult> DeleteFlight(string id)
         {
+            var result = new ContentResult();
             var flightPlan = _context.FlightsPlans.Single(f => f.FlightId == id);
             if (flightPlan != null)
             {
@@ -95,10 +96,15 @@ namespace FlightControlWeb
                     _context.Segments.Remove(s);
                 }
                 _context.FlightsPlans.Remove(flightPlan);
-                _context.SaveChangesAsync();
-                return true;
+                await _context.SaveChangesAsync();
+                result.StatusCode = 204;
             }
-            return false;
+            else
+            {
+                result.StatusCode = 400;
+                result.Content = "the flight couldnot be found";
+            }
+            return result;
         }
 
         public async Task<ActionResult<Server>> DeleteServer(string id)
@@ -128,23 +134,7 @@ namespace FlightControlWeb
         {
             if (FlightPlanExists(id))
             {
-                var flightPlan = await _context.FlightsPlans.FindAsync(id);
-                var initialLocation = await _context.InitialLocation.FindAsync(id);
-                var segments = _context.Segments.Where(s => s.FlightId == id).ToList();
-                var flightPlanDto = new FlightPlanDto
-                {
-                    Passengers = flightPlan.Passengers,
-                    CompanyName = flightPlan.CompanyName,
-                    InitialLocation = new InitialLocationDto
-                    {
-                        Longitude = initialLocation.Longitude,
-                        Latitude = initialLocation.Latitude,
-                        DateTime = initialLocation.DateTime
-                    }
-                };
-                FromSegmentsToSegmentsDto(segments, flightPlanDto.Segments);
-
-                return flightPlanDto;
+                return await GetInternalFlightPlan(id);
             }
             var result = new Microsoft.AspNetCore.Mvc.ContentResult();
             try
@@ -153,32 +143,10 @@ namespace FlightControlWeb
                 var flightServerMap = await _context.Map.FindAsync(id);
                 if (flightServerMap != null)
                 {
-                    var server = await _context.Servers.FindAsync(flightServerMap.ServerId);
-                    if (server != null)
-                    {
-
-                        var url = server.ServerURL + "/api/FlightPlan/" + id; ;
-                        HttpResponseMessage response = await _client.GetAsync(url);
-                        if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
-                        {
-                            var content = response.Content;
-                            var data = await content.ReadAsStringAsync();
-                            var serializeOptions = new JsonSerializerOptions
-                            {
-                                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                                WriteIndented = true
-                            };
-                            var externalFlightPlan = System.Text.Json.JsonSerializer.Deserialize<FlightPlanDto>(data, serializeOptions);
-                            return externalFlightPlan;
-                        }
-                    }
-                    
-                    result.StatusCode = 500;
-                    result.Content = "the server that contains the requested flight is unavailable\n";
-                    return result;
+                    return await GetExternalFlightPlan(id, result, flightServerMap);
                 }
-                
-                
+
+
                 result.StatusCode = 400;
                 result.Content = "the flight you request does not exist in any internal nor external air control server\n";
                 return result;
@@ -191,6 +159,53 @@ namespace FlightControlWeb
             
         }
 
+        private async Task<ActionResult<FlightPlanDto>> GetExternalFlightPlan(string id, ContentResult result, FlightServerMap flightServerMap)
+        {
+            var server = await _context.Servers.FindAsync(flightServerMap.ServerId);
+            if (server != null)
+            {
+
+                var url = server.ServerURL + "/api/FlightPlan/" + id; ;
+                HttpResponseMessage response = await _client.GetAsync(url);
+                if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
+                {
+                    var content = response.Content;
+                    var data = await content.ReadAsStringAsync();
+                    var serializeOptions = new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        WriteIndented = true
+                    };
+                    var externalFlightPlan = System.Text.Json.JsonSerializer.Deserialize<FlightPlanDto>(data, serializeOptions);
+                    return externalFlightPlan;
+                }
+            }
+
+            result.StatusCode = 500;
+            result.Content = "the server that contains the requested flight is unavailable\n";
+            return result;
+        }
+
+        private async Task<ActionResult<FlightPlanDto>> GetInternalFlightPlan(string id)
+        {
+            var flightPlan = await _context.FlightsPlans.FindAsync(id);
+            var initialLocation = await _context.InitialLocation.FindAsync(id);
+            var segments = _context.Segments.Where(s => s.FlightId == id).ToList();
+            var flightPlanDto = new FlightPlanDto
+            {
+                Passengers = flightPlan.Passengers,
+                CompanyName = flightPlan.CompanyName,
+                InitialLocation = new InitialLocationDto
+                {
+                    Longitude = initialLocation.Longitude,
+                    Latitude = initialLocation.Latitude,
+                    DateTime = initialLocation.DateTime
+                }
+            };
+            FromSegmentsToSegmentsDto(segments, flightPlanDto.Segments);
+
+            return flightPlanDto;
+        }
 
         public async Task<ActionResult<IEnumerable<Flight>>> GetFlights(string strDateTime, bool syncAll)
         {
@@ -250,7 +265,8 @@ namespace FlightControlWeb
                 f.IsExternal = true;
                 try
                 {
-                    if (_context.Map.FindAsync(f.FlightId) == null) { 
+                    var flightServer = await _context.Map.FindAsync(f.FlightId);
+                    if (flightServer == null) { 
                         await _context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId = s.ServerId });
 
                         await _context.SaveChangesAsync();

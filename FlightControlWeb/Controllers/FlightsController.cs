@@ -46,18 +46,17 @@ namespace FlightControlWeb.Controllers
 
         // DELETE: api/Flights/5
         [HttpDelete("{id}")]
-        public ActionResult<Flight> DeleteFlight(string id)
+        public async Task<ActionResult> DeleteFlight(string id)
         {
-            var result = _context.DeleteFlight(id);
-            if (result == false)
+            try
             {
-                return NotFound();
+                return await _context.DeleteFlight(id);
             }
-
-            return NoContent();
+            catch
+            {
+                return StatusCode(500);
+            }
         }
-
-
     }
 }
 

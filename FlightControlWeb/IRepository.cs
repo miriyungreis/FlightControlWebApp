@@ -11,7 +11,7 @@ namespace FlightControlWeb
     public interface IRepository
     {
         Task<ActionResult<IEnumerable<Flight>>> GetFlights(string date, bool syncAll);
-        bool DeleteFlight(string id);
+        Task<ActionResult> DeleteFlight(string id);
         Task<ActionResult<FlightPlanDto>> GetFlightPlan(string id);
         Task<ActionResult<FlightPlan>> AddFlightPlan(FlightPlanDto flightPlanDto);
         Task<IEnumerable<Server>> GetServers();
