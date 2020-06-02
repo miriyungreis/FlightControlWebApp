@@ -43,14 +43,13 @@ namespace FlightControlWeb.Controllers
             try
             {
               var flightPlan = await _context.AddFlightPlan(flightPlanDto);
-              if (flightPlan != null) {
-                    return CreatedAtAction("GetFlightPlan", new { id = flightPlan.Value.FlightId }, flightPlanDto);
-              }
-                return StatusCode(500);
+              return CreatedAtAction("GetFlightPlan", new { id = flightPlan.Value.FlightId }, flightPlanDto);   
             }
             catch 
             {
-                return StatusCode(500);
+                var result = new ContentResult();
+                result.StatusCode = 500;
+                return result;
             }
         }
   

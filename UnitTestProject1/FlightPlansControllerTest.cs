@@ -7,6 +7,7 @@ using FlightControlWeb.Models;
 using FlightControlWeb.Controllers;
 
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace FlightControlUnitTests
 {
@@ -27,6 +28,7 @@ namespace FlightControlUnitTests
             //assert
             Assert.AreEqual(flightPlanDto, ((CreatedAtActionResult)result.Result).Value);
         }
+        [TestMethod]
         public async Task PostFlightPlanFailedReturnStatusCode()
         {
             //arrange
@@ -37,7 +39,7 @@ namespace FlightControlUnitTests
             //act
             var result = await flightPlanController.PostFlightPlan(flightPlanDto);
             //assert
-            Assert.AreEqual(500, (StatusCodeResult)result.Result);
+            Assert.AreEqual(StatusCodes.Status500InternalServerError, ((ContentResult)result.Result).StatusCode);
 
 
 
