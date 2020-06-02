@@ -270,10 +270,16 @@ namespace FlightControlWeb
                         await _context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId = s.ServerId });
 
                         await _context.SaveChangesAsync();
-                        
+
+                    }
+                    else if(flightServer.ServerId != s.ServerId){
+                        _context.Map.Remove(flightServer);
+                        await _context.SaveChangesAsync();
+                        await _context.Map.AddAsync(new FlightServerMap { FlightId = f.FlightId, ServerId = s.ServerId });
+                        await _context.SaveChangesAsync();
+
                     }
                     flights.Add(f);
-
                 }
                 catch { }
             
