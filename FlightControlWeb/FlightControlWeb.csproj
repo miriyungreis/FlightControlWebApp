@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="mkdir $(SolutionDir)\wwwroot&#xD;&#xA;mkdir $(SolutionDir)\out\wwwroot&#xD;&#xA;xcopy /E /Y &quot;$(ProjectDir)wwwroot&quot; &quot;$(SolutionDir)wwwroot&quot;&#xD;&#xA;xcopy /E /Y &quot;$(ProjectDir)wwwroot&quot; &quot;$(SolutionDir)out/wwwroot&quot;&#xD;&#xA;" />
+    <Exec Command="mkdir $(SolutionDir)\wwwroot&#xD;&#xA;mkdir $(SolutionDir)\out\wwwroot&#xD;&#xA;xcopy /E /Y &quot;$(ProjectDir)wwwroot&quot; &quot;$(SolutionDir)wwwroot&quot;&#xD;&#xA;xcopy /E /Y &quot;$(ProjectDir)wwwroot&quot; &quot;$(SolutionDir)out/wwwroot&quot;&#xD;&#xA;xcopy $(ProjectDir)Application.db $(SolutionDir)out /Y" />
   </Target>
 
 </Project>
