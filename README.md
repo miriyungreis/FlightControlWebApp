@@ -4,7 +4,6 @@
 ASP.net core Web App that manages flights and present the client available flights relative to its time in UTC. the app supports flights from its own server (internal) and also external servers. 
 
 ![Alt ScreenShot](/FlightControlWeb/ClientApp/src/images/flight_screen.PNG?raw=true "ScreenShot 1")
-![Alt ScreenShot](/FlightControlWeb/ClientApp/src/images/main_screen.PNG?raw=true "ScreenShot 2")
 
 
 Front - End:
