@@ -26,7 +26,7 @@ Back - End:
 * Development Environment: Visual Studio
 * Unit Tests using moq
 
-Unit - Tests:
+FlightControlUnitTests (Unit-Tests):
 -----------------------------
 * 2 Unit Tests for the class: FlightPlanController
 * The tests check and verify the behaviour in two possible cases:
