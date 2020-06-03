@@ -28,12 +28,13 @@ Back - End:
 
 Unit - Tests:
 -----------------------------
-* the unit tests in this project were written for the class FlightPlanController
-* there are 2 tests for this class.
-* the tests check and verify the behaviour in two possible cases:
+* 2 Unit Tests for the class: FlightPlanController
+* The tests check and verify the behaviour in two possible cases:
 	* when posting flight success - the method returns the flight plan object
 	* when posting the flight by the server fails the method returns status code: 500.
-* 
+* Dependency Injection:
+	* the class FlightPlanController contains dependency injection in interface IRepository.
+	* there fore - we used in our tests a mock whic simulates IRepository Object.
 
 
 # System Requiremnets  
