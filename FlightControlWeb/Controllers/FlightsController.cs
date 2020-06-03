@@ -30,13 +30,37 @@ namespace FlightControlWeb.Controllers
             bool externalFlights = Request.Query.ContainsKey("sync_all");
 
             var result = await _context.GetFlights(date, externalFlights);
-            if (result != null)
+            if (result.Value == null)
             {
-                return result;
+                return NotFound();
             }
-            return NotFound();
+            var resultList = result.Value.ToList();
+            foreach(Flight f in resultList)
+            {
+
+                if (!isValid(f))
+                {
+                    resultList.Remove(f);
+                }
+            }
+            return resultList;
+            
         }
 
+        private bool isValid(Flight flight)
+        {
+            //check for null values
+            if (flight.FlightId == null || flight.CompanyName == null || flight.DateTime == null)
+            {
+                return false;
+            }
+            if (flight.Longitude > 180 || flight.Longitude < -180
+                || flight.Latitude > 90 || flight.Latitude < -90)
+            {
+                return false;
+            }
+            return true;
+        }
 
 
 

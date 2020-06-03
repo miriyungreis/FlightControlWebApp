@@ -22,19 +22,20 @@ Back - End:
 -----------------------------
 * ASP.NET Core 3.1 Framework
 * Web API Server with REST API (HTTP Requests)
-* SQLite with EntityFramework
+* using Sqlite data base with migrations using EntityFrameworkCore
 * Development Environment: Visual Studio
-* Unit Tests using moq
+* UnitTest using MSTest
 
 FlightControlUnitTests (Unit-Tests):
 -----------------------------
-* 2 Unit Tests for the class: FlightPlanController
-* The tests check and verify the behaviour in two possible cases:
-	* when posting flight success - the method returns the flight plan object
-	* when posting the flight by the server fails the method returns status code: 500.
+* 3 Unit Tests for the class: FlightPlanController
+* The tests check and verify the behaviour of PostFlightPlan method in three possible cases:
+	* posting new flight Plan succeeded - returns the flight plan object
+	* posting new flight plan failed in the server side - returns status code 500
+	* posting invalid flight plan - returns status code 400.
 * Dependency Injection:
-	* the class FlightPlanController contains dependency injection in interface IRepository.
-	* there fore - we used in our tests a mock whic simulates IRepository Object.
+	* the class FlightPlanController contains dependency injection inplamanting interface IRepository.
+	* therefore - we used for the tests a mock to simulates IRepository Object.
 
 
 # System Requiremnets  
