@@ -26,6 +26,16 @@ Back - End:
 * Development Environment: Visual Studio
 * Unit Tests using moq
 
+Unit - Tests:
+-----------------------------
+* the unit tests in this project were written for the class FlightPlanController
+* there are 2 tests for this class.
+* the tests check and verify the behaviour in two possible cases:
+** when posting flight success - the method returns the flight plan object
+**when posting the flight by the server fails the method returns status code: 500.
+* 
+
+
 # System Requiremnets  
 1. Supported Web Browsers: Edge, Chrome
 2. NodeJS

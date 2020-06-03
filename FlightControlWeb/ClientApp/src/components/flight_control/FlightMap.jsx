@@ -46,6 +46,7 @@ export default class FlightMap extends Component {
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          noWrap="true"
         />
         {this.loadFlightsOnMap()}
         {this.props.clicked_flight_plan !== null && this.isClickedFlightActive() && (
