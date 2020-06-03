@@ -32,7 +32,8 @@ namespace FlightControlWeb.Models
             [Required]
             public string Id { get; set; }
             public double Longitude { get; set; }
-            public double Latitude { get; set; }
+                
+        public double Latitude { get; set; }
             [JsonPropertyName("date_time")]
             public DateTime DateTime { get; set; }
         }
@@ -40,6 +41,7 @@ namespace FlightControlWeb.Models
     {
         public int Id { get; set; }
         public double Longitude { get; set; }
+        
         public double Latitude { get; set; }
 
         [JsonPropertyName("timespan_seconds")]
@@ -60,6 +62,7 @@ namespace FlightControlWeb.Models
     public class SegmentDto
     {
         public double Longitude { get; set; }
+        [Range(-90.0000001, 90, ErrorMessage = "latitude value is invalid")]
         public double Latitude { get; set; }
         [JsonPropertyName("timespan_seconds")]
         public int TimeSpanSeconds { get; set; }
@@ -68,6 +71,7 @@ namespace FlightControlWeb.Models
     public class InitialLocationDto
     {
         public double Longitude { get; set; }
+        [Range(-90.0000001, 90, ErrorMessage = "latitude value is invalid")]
         public double Latitude { get; set; }
         [JsonPropertyName("date_time")]
         public DateTime DateTime { get; set; }

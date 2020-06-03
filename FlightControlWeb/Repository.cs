@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Text.Json;
 using System.Linq.Expressions;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace FlightControlWeb
 {
@@ -238,7 +239,7 @@ namespace FlightControlWeb
         private async Task GetExternalFlights(string strDateTime, Server s, List<Flight> flights)
         {
             var url = s.ServerURL + "/api/Flights?relative_to=" + strDateTime;
-            HttpResponseMessage response = await _client.GetAsync(url);
+            var response = await _client.GetAsync(url);
             if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
             {
                 var content = response.Content;
@@ -249,7 +250,7 @@ namespace FlightControlWeb
                     WriteIndented = true
                 };
 
-                var externalFlights = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Flight>>(data, serializeOptions);
+                var externalFlights = JsonSerializer.Deserialize<IEnumerable<Flight>>(data, serializeOptions);
                 foreach (Flight f in externalFlights)
                 {
                     await AddExternalFlight(s, flights, f);
@@ -362,7 +363,7 @@ namespace FlightControlWeb
             DateTime time = flightInitialLocation.DateTime;
             DateTime prevTime = time;
             Location prevLocation = new Location { Longitude = flightInitialLocation.Longitude, Latitude = flightInitialLocation.Latitude };
-            Location location = new Location();
+            //Location location = new Location();
             TimeSpan flightTime = dateTime - flightInitialLocation.DateTime;
             var segments = _context.Segments.Where(s => s.FlightId == flightPlan.FlightId);
             SegmentDto prevSegment = null;
@@ -371,22 +372,7 @@ namespace FlightControlWeb
                 flightTime = flightTime - TimeSpan.FromSeconds(segment.TimeSpanSeconds);
                 if (flightTime.TotalSeconds < 0 || flightTime.TotalSeconds == 0)
                 {
-                    if (flightTime.TotalSeconds == 0)
-                    {
-                        return new Location { Latitude = segment.Latitude, Longitude = segment.Longitude };
-                    }
-                    double ratio = ((segment.TimeSpanSeconds + flightTime.TotalSeconds) / (double)segment.TimeSpanSeconds);
-                    
-
-                    if (prevSegment == null)
-                    {
-                        location.Latitude = flightInitialLocation.Latitude + ratio * (segment.Latitude - flightInitialLocation.Latitude);
-                        location.Longitude = flightInitialLocation.Longitude + ratio * (segment.Longitude - flightInitialLocation.Longitude);
-                        return location;
-                    }
-                    location.Latitude = prevSegment.Latitude + (ratio * (segment.Latitude - prevSegment.Latitude));
-                    location.Longitude = prevSegment.Longitude + (ratio * (segment.Longitude - prevSegment.Longitude));
-                    return location;
+                    return CalculateLocation(flightInitialLocation, flightTime, prevSegment, segment);
                 }
                 prevSegment = new SegmentDto { Latitude = segment.Latitude, Longitude = segment.Longitude, TimeSpanSeconds = segment.TimeSpanSeconds };
             }
@@ -395,32 +381,39 @@ namespace FlightControlWeb
             return null;
         }
 
-
-        private static Location NewMethod2(TimeSpan deltaTime, Location prevLocation, Segment segment)
+        private static Location CalculateLocation(InitialLocation flightInitialLocation, TimeSpan flightTime, SegmentDto prevSegment, Segment segment)
         {
             Location location = new Location();
-            
-            //int direction = 1;
-            //if (prevLocation.Latitude > segment.Latitude)
-            //direction = -1;
-            /*var velocityX = (segment.Latitude - prevLocation.Latitude) / (segment.TimeSpanSeconds);
-            
-            
-            location.Latitude = prevLocation.Latitude + velocityX * deltaTime.TotalSeconds;
-            var velocityY = (segment.Longitude - prevLocation.Longitude) / (segment.TimeSpanSeconds);
-            location.Longitude = prevLocation.Longitude + velocityY * deltaTime.TotalSeconds;*/
+            if (flightTime.TotalSeconds == 0)
+            {
+                return new Location { Latitude = segment.Latitude, Longitude = segment.Longitude };
+            }
+            double ratio = ((segment.TimeSpanSeconds + flightTime.TotalSeconds) / (double)segment.TimeSpanSeconds);
+
+
+            if (prevSegment == null)
+            {
+                location.Latitude = flightInitialLocation.Latitude + ratio * 
+                                    (segment.Latitude - flightInitialLocation.Latitude);
+                location.Longitude = flightInitialLocation.Longitude + ratio * 
+                                    (segment.Longitude - flightInitialLocation.Longitude);
+                return location;
+            }
+            location.Latitude = prevSegment.Latitude + (ratio * (segment.Latitude - prevSegment.Latitude));
+            location.Longitude = prevSegment.Longitude + (ratio * (segment.Longitude - prevSegment.Longitude));
             return location;
         }
 
         bool IsValidFlight(Flight flight)
         {
             if (flight.FlightId != null && flight.CompanyName != null && flight.DateTime != null)
+              
             {
                 return true;
             }
             return false;
         }
-
+      
         private async Task<IEnumerable<Flight>> GetInternalFlights(DateTime dateTime)
         {
             List<Flight> flights = new List<Flight>();

@@ -45,6 +45,22 @@ namespace FlightControlUnitTests
 
 
         }
+        [TestMethod]
+        public async Task PostInValidFlightPlanReturnStatusCode()
+        {
+            //arrange
+            FlightPlanDto flightPlanDto = FlightPlanGenerator.testFlightPlan;
+            flightPlanDto.InitialLocation.Latitude = 200;
+            var flightPlanController = new FlightPlanController(new Mock<IRepository>().Object);
+            //act
+            var result = await flightPlanController.PostFlightPlan(flightPlanDto);
+            //assert
+            Assert.AreEqual(StatusCodes.Status400BadRequest, ((ContentResult)result.Result).StatusCode);
+
+
+
+
+        }
         protected static FlightPlan FromDto(FlightPlanDto flightPlanDto)
         {
             List<Segment> segments = new List<Segment>();
