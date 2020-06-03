@@ -26,6 +26,17 @@ Back - End:
 * Development Environment: Visual Studio
 * Unit Tests using moq
 
+Unit - Tests:
+-----------------------------
+* 2 Unit Tests for the class: FlightPlanController
+* The tests check and verify the behaviour in two possible cases:
+	* when posting flight success - the method returns the flight plan object
+	* when posting the flight by the server fails the method returns status code: 500.
+* Dependency Injection:
+	* the class FlightPlanController contains dependency injection in interface IRepository.
+	* there fore - we used in our tests a mock whic simulates IRepository Object.
+
+
 # System Requiremnets  
 1. Supported Web Browsers: Edge, Chrome
 2. NodeJS

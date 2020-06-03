@@ -3,7 +3,6 @@ import axios from 'axios';
 import Dropzone from 'react-dropzone';
 import { toast } from 'react-toastify';
 
-/** *  Drop Zone style and logic - taken from react dz  ** */
 export default class DropZone extends Component {
   state = {
     style: '',

@@ -111,7 +111,7 @@ export class Home extends Component {
        * status code that falls out of the range of 2xx
        */
       error.response.status === 400
-        ? toast.error('Error in Request, Please Check Your JSON Format / Request Format!')
+        ? toast.error('Error in Request - Bad Request (400)')
         : toast.error(
             'Error In Response From Server!  Code: ' +
               error.response.status +

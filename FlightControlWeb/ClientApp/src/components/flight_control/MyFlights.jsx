@@ -15,7 +15,6 @@ export class MyFlights extends Component {
           <FlightItem
             key={flight.flight_id}
             flight={flight}
-            //onClick={this.props.onFlightClick.bind(this, flight.flight_id)}
             onFlightClick={this.props.onFlightClick}
             clicked_flight_id={this.props.clicked_flight_id}
             onDeleteFlightClick={this.props.onDeleteFlightClick}
