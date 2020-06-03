@@ -42,7 +42,6 @@ export default class DropZone extends Component {
         toast.success('Posting New Flight!');
       });
     } catch (error) {
-      toast.error('problem in json file');
       this.props.errorHandle(error);
     }
   };
